@@ -1,4 +1,5 @@
 apply plugin: 'java'
+apply plugin: 'idea'
 apply plugin: 'maven-publish'
 
 ext {
@@ -10,28 +11,8 @@ allprojects {
     repositories {
     		mavenLocal()
     		mavenCentral()
-        jcenter()         
+        	jcenter()
     }
-}
-
-publishing {
-	publications {
-    		maven(MavenPublication) {
-	    		groupId = 'com.flipkart'
-			artifactId = 'grpc-jexpress'
-			version = '1.1-SNAPSHOT'
-			from components.java
-		}
-    }    
-	repositories {
-		maven {
-			url "https://repo.clojars.org"
-			credentials {
-				username = rootProject.ext.clojarsusername
-				password = rootProject.ext.clojarspassword
-			}
-		}
-	}
 }
 
 def grpcVersion = '1.17.0'
@@ -43,7 +24,21 @@ subprojects {
 	
 	jar {
     		manifest.attributes provider: 'gradle'
-    }    
+    }
+
+	buildscript {
+		repositories {
+			mavenCentral()
+			maven {
+				url "https://repo.clojars.org"
+				credentials {
+					username = rootProject.ext.clojarsusername
+					password = rootProject.ext.clojarspassword
+				}
+			}
+		}
+	}
+
 	ext {
 		libraries = [
 		    slf4j_api: "org.slf4j:slf4j-api:1.7.12",
@@ -56,11 +51,11 @@ subprojects {
 		    yammer_healthchecks:"io.dropwizard.metrics:metrics-healthchecks:4.0.2",		    
 			grpc_netty: "io.grpc:grpc-netty:${grpcVersion}",
 			grpc_protobuf: "io.grpc:grpc-protobuf:${grpcVersion}",
-    			jersey: 'org.glassfish.jersey.containers:jersey-container-servlet:2.6',
-    			jersey_freemarker: 'org.glassfish.jersey.ext:jersey-mvc-freemarker:2.6',
-    			servlet: 'javax.servlet:javax.servlet-api:3.1.0',
-    			jackson: 'com.fasterxml.jackson.jaxrs:jackson-jaxrs-json-provider:2.9.4',
-    			jetty_metrics: 'com.codahale.metrics:metrics-jetty9:3.0.2',
+			jersey: 'org.glassfish.jersey.containers:jersey-container-servlet:2.6',
+			jersey_freemarker: 'org.glassfish.jersey.ext:jersey-mvc-freemarker:2.6',
+			servlet: 'javax.servlet:javax.servlet-api:3.1.0',
+			jackson: 'com.fasterxml.jackson.jaxrs:jackson-jaxrs-json-provider:2.9.4',
+			jetty_metrics: 'com.codahale.metrics:metrics-jetty9:3.0.2',
 			guice_validator: 'ru.vyarus:guice-validator:1.2.0',
 			hibernate_validator: 'org.hibernate:hibernate-validator:5.4.1.Final',
 			javax_el: 'org.glassfish:javax.el:3.0.1-b08',
