@@ -27,6 +27,7 @@ import com.codahale.metrics.jvm.MemoryUsageGaugeSet;
 import com.codahale.metrics.jvm.ThreadStatesGaugeSet;
 import com.flipkart.gjex.core.Application;
 import com.flipkart.gjex.core.Bundle;
+import com.flipkart.gjex.core.Configuration;
 import com.flipkart.gjex.core.filter.Filter;
 import com.flipkart.gjex.core.logging.Logging;
 import com.flipkart.gjex.core.service.Service;
@@ -39,11 +40,11 @@ import com.google.common.collect.Lists;
  * @author regu.b
  *
  */
-public class Bootstrap implements Logging {
+public class Bootstrap<T extends Configuration> implements Logging {
 
-	private final Application application;
+	private final Application<T> application;
 	private final MetricRegistry metricRegistry;
-	private final List<Bundle> bundles;
+	private final List<Bundle<? super T>> bundles;
 	private ClassLoader classLoader;
 
 	/** List of initialized Service instances*/
@@ -57,7 +58,7 @@ public class Bootstrap implements Logging {
 	/** The HealthCheckRegistry*/
 	private HealthCheckRegistry healthCheckRegistry;
 
-	public Bootstrap(Application application) {
+	public Bootstrap(Application<T> application) {
 		this.application = application;
 		this.metricRegistry = new MetricRegistry();
 		this.bundles = Lists.newArrayList();
@@ -66,7 +67,6 @@ public class Bootstrap implements Logging {
 		getMetricRegistry().register("jvm.gc", new GarbageCollectorMetricSet());
 		getMetricRegistry().register("jvm.memory", new MemoryUsageGaugeSet());
 		getMetricRegistry().register("jvm.threads", new ThreadStatesGaugeSet());
-
 		JmxReporter.forRegistry(getMetricRegistry()).build().start();
 	}
 	
@@ -74,7 +74,7 @@ public class Bootstrap implements Logging {
 	/**
 	 * Gets the bootstrap's Application
 	 */
-	public Application getApplication() {
+	public Application<T> getApplication() {
 		return application;
 	}
 
@@ -97,7 +97,7 @@ public class Bootstrap implements Logging {
      *
      * @param bundle a {@link Bundle}
      */
-    public void addBundle(Bundle bundle) {
+    public void addBundle(Bundle<? super T> bundle) {
         bundle.initialize(this);
         bundles.add(bundle);
     }    
@@ -124,18 +124,19 @@ public class Bootstrap implements Logging {
 
 	/**
      * Runs this Bootstrap's bundles in the specified Environment
+     * @param configuration configuration
      * @param environment the Application Environment
      * @throws Exception in case of errors during run
      */
     @SuppressWarnings("rawtypes")
-	public void run(Environment environment) throws Exception {
+	public void run(T configuration, Environment environment) throws Exception {
 		// Identify all Service implementations, start them and register for Runtime shutdown hook
         this.services = new LinkedList<Service>();
         this.filters = new LinkedList<Filter>();
         // Set the HealthCheckRegsitry to the one initialized by the Environment
         this.healthCheckRegistry = environment.getHealthCheckRegistry();
-        for (Bundle bundle : bundles) {
-            bundle.run(environment);
+        for (Bundle<? super T> bundle : bundles) {
+            bundle.run(configuration, environment);
             services.addAll(bundle.getServices());
             filters.addAll(bundle.getFilters());
             this.tracingSamplers = bundle.getTracingSamplers();

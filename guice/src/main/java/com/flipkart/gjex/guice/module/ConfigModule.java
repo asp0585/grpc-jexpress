@@ -84,7 +84,7 @@ public class ConfigModule extends AbstractModule {
     /**
      * Performs concrete bindings for interfaces
      *
-     * @see com.google.inject.AbstractModule#configure()
+     * @see AbstractModule#configure()
      */
     @Override
     protected void configure() {

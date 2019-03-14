@@ -20,6 +20,7 @@ import java.util.List;
 
 import com.codahale.metrics.health.HealthCheck;
 import com.flipkart.gjex.core.Bundle;
+import com.flipkart.gjex.core.Configuration;
 import com.flipkart.gjex.core.filter.Filter;
 import com.flipkart.gjex.core.logging.Logging;
 import com.flipkart.gjex.core.service.Service;
@@ -52,7 +53,7 @@ import ru.vyarus.guice.validator.ImplicitValidationModule;
  * @author regu.b
  *
  */
-public class GuiceBundle implements Bundle, Logging {
+public class GuiceBundle<T extends Configuration> implements Bundle<T>, Logging {
 
 	private final List<Module> modules;
 	private Injector baseInjector;
@@ -62,9 +63,11 @@ public class GuiceBundle implements Bundle, Logging {
 	private List<HealthCheck> healthchecks;
 	private List<TracingSampler> tracingSamplers;
 	
-	public static class Builder {
+	public static class Builder<T extends Configuration> {
+
 		private List<Module> modules = Lists.newArrayList();
-		public Builder addModules(Module... moreModules) {
+
+		public Builder<T> addModules(Module... moreModules) {
 			for (Module module : moreModules) {
 				Preconditions.checkNotNull(module);
 				modules.add(module);
@@ -76,7 +79,7 @@ public class GuiceBundle implements Bundle, Logging {
         }
 	}
 	public static Builder newBuilder() {
-        return new Builder();
+        return new Builder<>();
     }		
 	
 	private GuiceBundle(List<Module> modules) {
@@ -87,7 +90,7 @@ public class GuiceBundle implements Bundle, Logging {
 	
 	@SuppressWarnings("rawtypes")
 	@Override
-	public void initialize(Bootstrap bootstrap) {
+	public void initialize(Bootstrap<?> bootstrap) {
 		// add the Config and Metrics MetricsInstrumentationModule
 		this.modules.add( new ConfigModule());
 		this.modules.add(MetricsInstrumentationModule.builder().withMetricRegistry(bootstrap.getMetricRegistry()).build());
@@ -107,7 +110,7 @@ public class GuiceBundle implements Bundle, Logging {
 	}
 
 	@Override
-	public void run(Environment environment) {
+	public void run(T configuration, Environment environment) {
 		GrpcServer grpcServer = this.baseInjector.getInstance(GrpcServer.class);
 		// Add all Grpc Services to the Grpc Server
 		List<BindableService> services = this.getInstances(this.baseInjector, BindableService.class);
