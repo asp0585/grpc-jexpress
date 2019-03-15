@@ -15,19 +15,17 @@
  */
 package com.flipkart.gjex.core.setup;
 
-import java.lang.management.ManagementFactory;
-import java.util.LinkedList;
-import java.util.List;
-
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.jmx.JmxReporter;
 import com.codahale.metrics.jvm.BufferPoolMetricSet;
 import com.codahale.metrics.jvm.GarbageCollectorMetricSet;
 import com.codahale.metrics.jvm.MemoryUsageGaugeSet;
 import com.codahale.metrics.jvm.ThreadStatesGaugeSet;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.flipkart.gjex.core.Application;
 import com.flipkart.gjex.core.Bundle;
 import com.flipkart.gjex.core.Configuration;
+import com.flipkart.gjex.core.GjexObjectMapper;
 import com.flipkart.gjex.core.config.ConfigurationFactoryFactory;
 import com.flipkart.gjex.core.config.ConfigurationSourceProvider;
 import com.flipkart.gjex.core.config.DefaultConfigurationFactoryFactory;
@@ -40,6 +38,9 @@ import com.google.common.collect.Lists;
 
 import javax.validation.Validation;
 import javax.validation.ValidatorFactory;
+import java.lang.management.ManagementFactory;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * The pre-start application container, containing services required to bootstrap a GJEX application
@@ -53,16 +54,8 @@ public class Bootstrap<T extends Configuration> implements Logging {
 	private final MetricRegistry metricRegistry;
 	private final List<Bundle<? super T>> bundles;
 	private ClassLoader classLoader;
-
+	private final ObjectMapper objectMapper;
 	private ConfigurationFactoryFactory<T> configurationFactoryFactory;
-
-	public ConfigurationSourceProvider getConfigurationSourceProvider() {
-		return configurationSourceProvider;
-	}
-
-	public void setConfigurationSourceProvider(ConfigurationSourceProvider configurationSourceProvider) {
-		this.configurationSourceProvider = configurationSourceProvider;
-	}
 
 	private ConfigurationSourceProvider configurationSourceProvider;
 	private ValidatorFactory validatorFactory;
@@ -84,6 +77,7 @@ public class Bootstrap<T extends Configuration> implements Logging {
 		this.application = application;
 		this.metricRegistry = new MetricRegistry();
 		this.bundles = Lists.newArrayList();
+		this.objectMapper = GjexObjectMapper.newObjectMapper();
 		this.classLoader = Thread.currentThread().getContextClassLoader();
 		this.configurationFactoryFactory = new DefaultConfigurationFactoryFactory<>();
 		this.configurationSourceProvider = new FileConfigurationSourceProvider();
@@ -96,7 +90,6 @@ public class Bootstrap<T extends Configuration> implements Logging {
 		getMetricRegistry().register("jvm.threads", new ThreadStatesGaugeSet());
 		JmxReporter.forRegistry(getMetricRegistry()).build().start();
 	}
-	
 	
 	/**
 	 * Gets the bootstrap's Application
@@ -157,12 +150,25 @@ public class Bootstrap<T extends Configuration> implements Logging {
 		this.configurationFactoryFactory = configurationFactoryFactory;
 	}
 
+	public ConfigurationSourceProvider getConfigurationSourceProvider() {
+		return configurationSourceProvider;
+	}
+
+	public void setConfigurationSourceProvider(ConfigurationSourceProvider configurationSourceProvider) {
+		this.configurationSourceProvider = configurationSourceProvider;
+	}
+
+
 	public ValidatorFactory getValidatorFactory() {
 		return validatorFactory;
 	}
 
 	public void setValidatorFactory(ValidatorFactory validatorFactory) {
 		this.validatorFactory = validatorFactory;
+	}
+
+	public ObjectMapper getObjectMapper() {
+		return objectMapper;
 	}
 
 	/**
@@ -221,5 +227,5 @@ public class Bootstrap<T extends Configuration> implements Logging {
 	    		}
 	    	});    		
     }
-    
+
 }

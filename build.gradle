@@ -16,11 +16,11 @@ allprojects {
 
 publishing {
 	publications {
-    		maven(MavenPublication) {
-	    		groupId = 'com.flipkart'
-			artifactId = 'grpc-jexpress'
-			version = '1.2.1-SNAPSHOT'
-			from components.java
+    		maven(MavenPublication) { 
+				groupId = 'com.flipkart'
+			    artifactId = 'grpc-jexpress'
+			    version = '1.2.3-SNAPSHOT'
+			    from components.java
 		}
     }    
 	repositories {
@@ -40,7 +40,7 @@ def jacksonVersion = '2.9.7'
 subprojects {
 	apply plugin: 'maven'
 	group = 'com.flipkart.grpc-jexpress'
-	version = '1.2.1-ANAND-SNAPSHOT'
+	version = '1.2.3-ANAND-SNAPSHOT'
 	
 	jar {
     		manifest.attributes provider: 'gradle'
@@ -73,7 +73,6 @@ subprojects {
 			rxjava2: "io.reactivex.rxjava2:rxjava:2.2.0",
 			hibernate_validator: 'org.hibernate:hibernate-validator:5.4.1.Final',
 			javax_validation: 'javax.validation:validation-api:1.1.0.Final'
-
 		]
 	}
 }

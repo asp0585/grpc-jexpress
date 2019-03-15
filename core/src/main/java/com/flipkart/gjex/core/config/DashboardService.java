@@ -1,6 +1,6 @@
 package com.flipkart.gjex.core.config;
 
-public class DashboardServiceConfig {
+public class DashboardService {
 
     private int port;
     private int acceptors;

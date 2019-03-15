@@ -20,9 +20,8 @@ public class SampleApplication extends Application<SampleConfiguration> {
 
     @Override
     public void initialize(Bootstrap<SampleConfiguration> bootstrap) {
-        SampleModule sampleModule= new SampleModule();
-        GuiceBundle<SampleConfiguration> guiceBundle = GuiceBundle.newBuilder()
-                .addModules(sampleModule)
+        GuiceBundle<SampleConfiguration> guiceBundle = new GuiceBundle.Builder<SampleConfiguration>()
+                .addModules(new SampleModule())
                 .build();
         bootstrap.addBundle(guiceBundle);
     }

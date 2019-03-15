@@ -1,6 +1,6 @@
 package com.flipkart.gjex.core.config;
 
-public class ApiServiceConfig {
+public class ApiService {
 
     private int port;
     private int acceptors;

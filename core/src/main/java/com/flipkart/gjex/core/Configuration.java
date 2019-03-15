@@ -1,14 +1,29 @@
 package com.flipkart.gjex.core;
 
-import com.flipkart.gjex.core.config.ApiServiceConfig;
-import com.flipkart.gjex.core.config.DashboardServiceConfig;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.flipkart.gjex.core.config.ApiService;
+import com.flipkart.gjex.core.config.DashboardService;
 import com.flipkart.gjex.core.config.GrpcConfig;
+
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
 public class Configuration {
 
+    @Valid
+    @NotNull
+    @JsonProperty("Grpc")
     private GrpcConfig grpc;
-    private ApiServiceConfig apiServiceConfig;
-    private DashboardServiceConfig dashboardServiceConfig;
+
+    @Valid
+    @NotNull
+    @JsonProperty("Api")
+    private ApiService apiService;
+
+    @Valid
+    @NotNull
+    @JsonProperty("Dashboard")
+    private DashboardService dashboardService;
 
     public GrpcConfig getGrpc() {
         return grpc;
@@ -18,28 +33,28 @@ public class Configuration {
         this.grpc = grpc;
     }
 
-    public ApiServiceConfig getApiServiceConfig() {
-        return apiServiceConfig;
+    public ApiService getApiService() {
+        return apiService;
     }
 
-    public void setApiServiceConfig(ApiServiceConfig apiServiceConfig) {
-        this.apiServiceConfig = apiServiceConfig;
+    public void setApiService(ApiService apiService) {
+        this.apiService = apiService;
     }
 
-    public DashboardServiceConfig getDashboardServiceConfig() {
-        return dashboardServiceConfig;
+    public DashboardService getDashboardService() {
+        return dashboardService;
     }
 
-    public void setDashboardServiceConfig(DashboardServiceConfig dashboardServiceConfig) {
-        this.dashboardServiceConfig = dashboardServiceConfig;
+    public void setDashboardService(DashboardService dashboardService) {
+        this.dashboardService = dashboardService;
     }
 
     @Override
     public String toString() {
         return "Configuration{" +
                 "grpc=" + grpc +
-                ", apiServiceConfig=" + apiServiceConfig +
-                ", dashboardServiceConfig=" + dashboardServiceConfig +
+                ", apiService=" + apiService +
+                ", dashboardService=" + dashboardService +
                 '}';
     }
 }

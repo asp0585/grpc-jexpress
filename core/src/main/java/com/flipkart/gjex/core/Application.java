@@ -15,21 +15,18 @@
  */
 package com.flipkart.gjex.core;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.flipkart.gjex.core.config.*;
+import com.flipkart.gjex.core.logging.Logging;
+import com.flipkart.gjex.core.setup.Bootstrap;
+import com.flipkart.gjex.core.setup.Environment;
+import net.sourceforge.argparse4j.inf.Namespace;
+
+import javax.validation.Validator;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.text.MessageFormat;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.flipkart.gjex.core.config.ConfigurationException;
-import com.flipkart.gjex.core.config.ConfigurationFactory;
-import com.flipkart.gjex.core.config.ConfigurationFactoryFactory;
-import com.flipkart.gjex.core.config.ConfigurationSourceProvider;
-import com.flipkart.gjex.core.logging.Logging;
-import com.flipkart.gjex.core.setup.Bootstrap;
-import com.flipkart.gjex.core.setup.Environment;
-
-import javax.validation.Validator;
 
 /**
  * The base class for a GJEX application
@@ -51,17 +48,21 @@ public abstract class Application<T extends Configuration> implements Logging {
 	/** The machine name where this GJEX instance is running */
 	private String hostName;
 
+
 	private T configuration;
-	
+
+	private final ArgumentParserWrapper argumentParserWrapper;
     /**
      * Constructor for this class
      */
     public Application() {
+    	this.argumentParserWrapper = new ArgumentParserWrapper();
 	    	try {
 	    		this.hostName = InetAddress.getLocalHost().getHostName();
 	    	} catch (UnknownHostException e) {
 	    		//ignore the exception, not critical information
-	    	}        
+	    	}
+
     }
 	
 	/**
@@ -107,22 +108,16 @@ public abstract class Application<T extends Configuration> implements Logging {
         /* Create Environment */
         Environment environment = new Environment(getName(), bootstrap.getMetricRegistry());
 
-        String path = "/Users/anand.pandey/codebase/opensource/grpc-jexpress/runtime/src/main/resources/packaged/configuration.yml";
-        // TODO -> Get configuration here
+		Namespace namespace = argumentParserWrapper.parseArguments(arguments);
 		configuration = parseConfiguration(bootstrap.getConfigurationFactoryFactory(), bootstrap.getConfigurationSourceProvider(),
-				bootstrap.getValidatorFactory().getValidator(), path, getConfigurationClass(), new ObjectMapper());
-
+				bootstrap.getValidatorFactory().getValidator(), namespace.getString("file"), getConfigurationClass(), bootstrap.getObjectMapper());
 
         /* Run bundles etc */
         bootstrap.run(configuration, environment);
         /* Run this Application */        
         run(configuration, environment);
 
-	    final Object[] displayArgs = {
-	    			this.getName(),
-				(System.currentTimeMillis() - start),
-				this.hostName,
-	    };
+	    final Object[] displayArgs = {this.getName(), (System.currentTimeMillis() - start), hostName};
 		info(STARTUP_DISPLAY.format(displayArgs));
 	    info("** GJEX startup complete **");
 	    

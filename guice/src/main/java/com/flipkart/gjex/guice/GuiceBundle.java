@@ -15,9 +15,6 @@
  */
 package com.flipkart.gjex.guice;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.codahale.metrics.health.HealthCheck;
 import com.flipkart.gjex.core.Bundle;
 import com.flipkart.gjex.core.Configuration;
@@ -28,24 +25,15 @@ import com.flipkart.gjex.core.setup.Bootstrap;
 import com.flipkart.gjex.core.setup.Environment;
 import com.flipkart.gjex.core.tracing.TracingSampler;
 import com.flipkart.gjex.grpc.service.GrpcServer;
-import com.flipkart.gjex.guice.module.ApiModule;
 import com.flipkart.gjex.guice.module.ConfigModule;
-import com.flipkart.gjex.guice.module.DashboardModule;
-import com.flipkart.gjex.guice.module.ServerModule;
-import com.flipkart.gjex.guice.module.TaskModule;
-import com.flipkart.gjex.guice.module.TracingModule;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
-import com.google.inject.Binding;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-import com.google.inject.Key;
-import com.google.inject.Module;
-import com.google.inject.TypeLiteral;
+import com.google.inject.*;
 import com.palominolabs.metrics.guice.MetricsInstrumentationModule;
-
 import io.grpc.BindableService;
-import ru.vyarus.guice.validator.ImplicitValidationModule;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A Guice GJEX Bundle implementation. Multiple Guice Modules may be added to this Bundle.
@@ -74,15 +62,12 @@ public class GuiceBundle<T extends Configuration> implements Bundle<T>, Logging 
 			}
 			return this;
 		}
-		public <T> GuiceBundle build() {
-            return new GuiceBundle(this.modules);
+		public GuiceBundle<T> build() {
+            return new GuiceBundle<>(this.modules);
         }
 	}
-	public static <T> Builder newBuilder() {
-        return new Builder<>();
-    }		
-	
-	private <T> GuiceBundle(List<Module> modules) {
+
+	private GuiceBundle(List<Module> modules) {
 		Preconditions.checkNotNull(modules);
         Preconditions.checkArgument(!modules.isEmpty());
         this.modules = modules;
@@ -95,7 +80,7 @@ public class GuiceBundle<T extends Configuration> implements Bundle<T>, Logging 
 		this.modules.add( new ConfigModule());
 		this.modules.add(MetricsInstrumentationModule.builder().withMetricRegistry(bootstrap.getMetricRegistry()).build());
 		// add the Validation module
-//		this.modules.add(new ImplicitValidationModule()); TODO - Anand
+//		this.modules.add(new ImplicitValidationModule()); // TODO - Anand
 		// add the Api module before Tracing module so that APIs are timed from the start of execution
 //		this.modules.add(new ApiModule());
 		// add the Tracing module before Task module so that even Concurrent tasks can be traced
