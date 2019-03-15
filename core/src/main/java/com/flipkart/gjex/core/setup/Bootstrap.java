@@ -28,11 +28,18 @@ import com.codahale.metrics.jvm.ThreadStatesGaugeSet;
 import com.flipkart.gjex.core.Application;
 import com.flipkart.gjex.core.Bundle;
 import com.flipkart.gjex.core.Configuration;
+import com.flipkart.gjex.core.config.ConfigurationFactoryFactory;
+import com.flipkart.gjex.core.config.ConfigurationSourceProvider;
+import com.flipkart.gjex.core.config.DefaultConfigurationFactoryFactory;
+import com.flipkart.gjex.core.config.FileConfigurationSourceProvider;
 import com.flipkart.gjex.core.filter.Filter;
 import com.flipkart.gjex.core.logging.Logging;
 import com.flipkart.gjex.core.service.Service;
 import com.flipkart.gjex.core.tracing.TracingSampler;
 import com.google.common.collect.Lists;
+
+import javax.validation.Validation;
+import javax.validation.ValidatorFactory;
 
 /**
  * The pre-start application container, containing services required to bootstrap a GJEX application
@@ -47,11 +54,17 @@ public class Bootstrap<T extends Configuration> implements Logging {
 	private final List<Bundle<? super T>> bundles;
 	private ClassLoader classLoader;
 
+	private ConfigurationFactoryFactory<T> configurationFactoryFactory;
+	private ConfigurationSourceProvider configurationSourceProvider;
+	private ValidatorFactory validatorFactory;
+
 	/** List of initialized Service instances*/
 	List<Service> services;
+
 	/** List of initialized Filter instances*/
 	@SuppressWarnings("rawtypes")
 	List<Filter> filters;
+
 	/** List of initialized ConfigurableTracingSampler instances*/
 	List<TracingSampler> tracingSamplers;
 
@@ -62,6 +75,11 @@ public class Bootstrap<T extends Configuration> implements Logging {
 		this.application = application;
 		this.metricRegistry = new MetricRegistry();
 		this.bundles = Lists.newArrayList();
+		this.classLoader = Thread.currentThread().getContextClassLoader();
+		this.configurationFactoryFactory = new DefaultConfigurationFactoryFactory<>();
+		this.configurationSourceProvider = new FileConfigurationSourceProvider();
+		this.validatorFactory = Validation.buildDefaultValidatorFactory();
+
 		getMetricRegistry().register("jvm.buffers", new BufferPoolMetricSet(ManagementFactory
                 .getPlatformMBeanServer()));
 		getMetricRegistry().register("jvm.gc", new GarbageCollectorMetricSet());
@@ -120,6 +138,22 @@ public class Bootstrap<T extends Configuration> implements Logging {
 	
 	public List<TracingSampler> getTracingSamplers() {
 		return tracingSamplers;
+	}
+
+	public ConfigurationFactoryFactory<T> getConfigurationFactoryFactory() {
+		return configurationFactoryFactory;
+	}
+
+	public void setConfigurationFactoryFactory(ConfigurationFactoryFactory<T> configurationFactoryFactory) {
+		this.configurationFactoryFactory = configurationFactoryFactory;
+	}
+
+	public ValidatorFactory getValidatorFactory() {
+		return validatorFactory;
+	}
+
+	public void setValidatorFactory(ValidatorFactory validatorFactory) {
+		this.validatorFactory = validatorFactory;
 	}
 
 	/**

@@ -42,8 +42,8 @@ public abstract class Application<T extends Configuration> implements Logging {
     
 	/** The machine name where this GJEX instance is running */
 	private String hostName;
-	
-	/*
+
+	private T configuration;
 	
     /**
      * Constructor for this class
@@ -70,11 +70,14 @@ public abstract class Application<T extends Configuration> implements Logging {
 	 * @param bootstrap the Bootstrap for this Application
 	 */
 	public abstract void initialize(Bootstrap<T> bootstrap);
-	
+
 	/**
-	 * Runs this Application in the specified Environment
-	 * @param environment the Environment to run in
-	 * @throws Exception in case of errors during run
+	 * When the application runs, this is called after the {@link Bundle}s are run. Override it to add
+	 * providers, resources, etc. for your application.
+	 *
+	 * @param configuration the parsed {@link Configuration} object
+	 * @param environment   the application's {@link Environment}
+	 * @throws Exception if something goes wrong
 	 */
 	public abstract void run(T configuration, Environment environment) throws Exception;
 	
@@ -85,15 +88,20 @@ public abstract class Application<T extends Configuration> implements Logging {
 	 * @param arguments command-line arguments for starting this Application
 	 * @throws Exception in case of errors during run
 	 */
-	public final void run(T configuration, String... arguments) throws Exception {
+	public final void run(String... arguments) throws Exception {
 		info("** GJEX starting up... **");
 		long start = System.currentTimeMillis();
-		
+
 		final Bootstrap<T> bootstrap = new Bootstrap<>(this);
 		/* Hook for applications to initialize their pre-start environment using bootstrap's properties */
         initialize(bootstrap);
+
         /* Create Environment */
-        Environment environment = new Environment(getName(),bootstrap.getMetricRegistry());      
+        Environment environment = new Environment(getName(), bootstrap.getMetricRegistry());
+
+        // TODO -> Get configuration here
+
+
         /* Run bundles etc */
         bootstrap.run(configuration, environment);
         /* Run this Application */        

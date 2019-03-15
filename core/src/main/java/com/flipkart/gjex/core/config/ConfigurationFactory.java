@@ -36,4 +36,5 @@ public interface ConfigurationFactory<T> {
      * @throws ConfigurationException if there is an error parsing or validating the file
      */
     T build() throws IOException, ConfigurationException;
+
 }
