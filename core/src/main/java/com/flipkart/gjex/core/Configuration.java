@@ -6,10 +6,8 @@ import com.flipkart.gjex.core.config.GrpcConfig;
 
 public class Configuration {
 
-    private GrpcConfig grpcConfig;
-
+    private GrpcConfig grpc;
     private ApiServiceConfig apiServiceConfig;
-
     private DashboardServiceConfig dashboardServiceConfig;
 
 }

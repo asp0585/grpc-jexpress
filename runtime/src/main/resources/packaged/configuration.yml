@@ -1,40 +1,13 @@
-Grpc:
-  server.port: 50051
-Dashboard:
-  service.port: 9999
-  service.acceptors: 5
-  service.selectors: 10
-  service.workers: 30
-Api:
-  service.port: 9998
-  service.acceptors: 5
-  service.selectors: 10
-  service.workers: 30  
-  scheduledexecutor.threadpool.size: 1
-Tracing:
-  collector.endpoint: http://localhost:9411/api/v2/spans
-
-
-databaseConfiguration:
-  driverClass: com.mysql.jdbc.Driver
-  validationQuery: "/* MyService Health Check */ SELECT 1"
-  minSize: 8
-  validationInterval: 5s
-  checkConnectionWhileIdle: true
-  maxWaitForConnection: 5s
-  initialSize: 8
-  #url: jdbc:mysql://localhost/mediator_fkmp_prod?zeroDateTimeBehavior=convertToNull
-  url: jdbc:mysql://localhost/mediator_mpca_prod_copy?zeroDateTimeBehavior=convertToNull
-  user: root
-  password: wTlUWhXWVps=
-  salt: mediator
-  properties:
-    charSet: UTF-8
-    hibernate.session.events.log: false
-    hibernate.generate_statistics: false
-    hibernate.dialect: 'org.hibernate.dialect.MySQLDialect'
-  maxSize: 1000
-  minIdleTime: 1 minute
-  collector.endpoint: http://localhost:9411/api/v2/spans
-
-  
+grpc:
+    port: 50051
+dashboardServiceConfig:
+    port: 9999
+    acceptors: 5
+    selectors: 10
+    workers: 30
+apiServiceConfig:
+    port: 9998
+    acceptors: 5
+    selectors: 10
+    workers: 30
+    scheduledexecutor.threadpool.size: 1

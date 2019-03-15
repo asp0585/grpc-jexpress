@@ -74,15 +74,15 @@ public class GuiceBundle<T extends Configuration> implements Bundle<T>, Logging 
 			}
 			return this;
 		}
-		public GuiceBundle build() {
+		public <T> GuiceBundle build() {
             return new GuiceBundle(this.modules);
         }
 	}
-	public static Builder newBuilder() {
+	public static <T> Builder newBuilder() {
         return new Builder<>();
     }		
 	
-	private GuiceBundle(List<Module> modules) {
+	private <T> GuiceBundle(List<Module> modules) {
 		Preconditions.checkNotNull(modules);
         Preconditions.checkArgument(!modules.isEmpty());
         this.modules = modules;
@@ -95,7 +95,7 @@ public class GuiceBundle<T extends Configuration> implements Bundle<T>, Logging 
 		this.modules.add( new ConfigModule());
 		this.modules.add(MetricsInstrumentationModule.builder().withMetricRegistry(bootstrap.getMetricRegistry()).build());
 		// add the Validation module
-		this.modules.add(new ImplicitValidationModule());
+//		this.modules.add(new ImplicitValidationModule()); TODO - Anand
 		// add the Api module before Tracing module so that APIs are timed from the start of execution
 		this.modules.add(new ApiModule());
 		// add the Tracing module before Task module so that even Concurrent tasks can be traced

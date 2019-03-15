@@ -55,6 +55,15 @@ public class Bootstrap<T extends Configuration> implements Logging {
 	private ClassLoader classLoader;
 
 	private ConfigurationFactoryFactory<T> configurationFactoryFactory;
+
+	public ConfigurationSourceProvider getConfigurationSourceProvider() {
+		return configurationSourceProvider;
+	}
+
+	public void setConfigurationSourceProvider(ConfigurationSourceProvider configurationSourceProvider) {
+		this.configurationSourceProvider = configurationSourceProvider;
+	}
+
 	private ConfigurationSourceProvider configurationSourceProvider;
 	private ValidatorFactory validatorFactory;
 

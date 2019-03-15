@@ -15,13 +15,21 @@
  */
 package com.flipkart.gjex.core;
 
+import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.text.MessageFormat;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.flipkart.gjex.core.config.ConfigurationException;
+import com.flipkart.gjex.core.config.ConfigurationFactory;
+import com.flipkart.gjex.core.config.ConfigurationFactoryFactory;
+import com.flipkart.gjex.core.config.ConfigurationSourceProvider;
 import com.flipkart.gjex.core.logging.Logging;
 import com.flipkart.gjex.core.setup.Bootstrap;
 import com.flipkart.gjex.core.setup.Environment;
+
+import javax.validation.Validator;
 
 /**
  * The base class for a GJEX application
@@ -99,7 +107,10 @@ public abstract class Application<T extends Configuration> implements Logging {
         /* Create Environment */
         Environment environment = new Environment(getName(), bootstrap.getMetricRegistry());
 
+        String path = "/Users/anand.pandey/codebase/opensource/grpc-jexpress/runtime/src/main/resources/packaged/configuration.yml";
         // TODO -> Get configuration here
+		configuration = parseConfiguration(bootstrap.getConfigurationFactoryFactory(), bootstrap.getConfigurationSourceProvider(),
+				bootstrap.getValidatorFactory().getValidator(), path, getConfigurationClass(), new ObjectMapper());
 
 
         /* Run bundles etc */
@@ -120,4 +131,17 @@ public abstract class Application<T extends Configuration> implements Logging {
 		return Generics.getTypeParameter(getClass(), Configuration.class);
 	}
 
+	private T parseConfiguration(ConfigurationFactoryFactory<T> configurationFactoryFactory,
+								 ConfigurationSourceProvider provider,
+								 Validator validator,
+								 String path,
+								 Class<T> klass,
+								 ObjectMapper objectMapper) throws IOException, ConfigurationException {
+		final ConfigurationFactory<T> configurationFactory = configurationFactoryFactory
+				.create(klass, validator, objectMapper, "gjex");
+		if (path != null) {
+			return configurationFactory.build(provider, path);
+		}
+		return configurationFactory.build();
+	}
 }

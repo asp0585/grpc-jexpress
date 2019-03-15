@@ -40,7 +40,7 @@ def jacksonVersion = '2.9.7'
 subprojects {
 	apply plugin: 'maven'
 	group = 'com.flipkart.grpc-jexpress'
-	version = '1.1-SNAPSHOT'
+	version = '1.2.1-ANAND-SNAPSHOT'
 	
 	jar {
     		manifest.attributes provider: 'gradle'
@@ -64,7 +64,6 @@ subprojects {
 			object_mapper: "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}",
     		jetty_metrics: 'com.codahale.metrics:metrics-jetty9:3.0.2',
 			guice_validator: 'ru.vyarus:guice-validator:1.2.0',
-			hibernate_validator: 'org.hibernate:hibernate-validator:5.4.1.Final',
 			javax_el: 'org.glassfish:javax.el:3.0.1-b08',
 			opentracing: 'io.opentracing:opentracing-api:0.31.0',
 			lombok: 'org.projectlombok:lombok:1.18.2',
@@ -72,6 +71,7 @@ subprojects {
 			hystrix_core: "com.netflix.hystrix:hystrix-core:1.5.12",
 			hystrix_metrics_stream: "com.netflix.hystrix:hystrix-metrics-event-stream:1.5.12",
 			rxjava2: "io.reactivex.rxjava2:rxjava:2.2.0",
+			hibernate_validator: 'org.hibernate:hibernate-validator:5.4.1.Final',
 			javax_validation: 'javax.validation:validation-api:1.1.0.Final'
 
 		]

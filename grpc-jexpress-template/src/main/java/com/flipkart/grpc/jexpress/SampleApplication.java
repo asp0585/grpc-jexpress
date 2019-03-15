@@ -6,7 +6,7 @@ import com.flipkart.gjex.core.setup.Environment;
 import com.flipkart.gjex.guice.GuiceBundle;
 import com.flipkart.grpc.jexpress.module.SampleModule;
 
-public class SampleApplication extends Application {
+public class SampleApplication extends Application<SampleConfiguration> {
 
     @Override
     public String getName() {
@@ -14,17 +14,17 @@ public class SampleApplication extends Application {
     }
 
     @Override
-    public void initialize(Bootstrap bootstrap) {
-        SampleModule sampleModule= new SampleModule();
-        GuiceBundle guiceBundle = GuiceBundle.newBuilder()
-                .addModules(sampleModule)
-                .build();
-        bootstrap.addBundle(guiceBundle);
+    public void run(SampleConfiguration configuration, Environment environment) throws Exception {
+
     }
 
     @Override
-    public void run(Environment environment) throws Exception {
-
+    public void initialize(Bootstrap<SampleConfiguration> bootstrap) {
+        SampleModule sampleModule= new SampleModule();
+        GuiceBundle<SampleConfiguration> guiceBundle = GuiceBundle.newBuilder()
+                .addModules(sampleModule)
+                .build();
+        bootstrap.addBundle(guiceBundle);
     }
 
     public static void main(String [] args) throws Exception {

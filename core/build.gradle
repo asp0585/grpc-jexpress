@@ -36,11 +36,12 @@ dependencies {
 	implementation libraries.hystrix_core
 	implementation libraries.hystrix_metrics_stream
 	implementation libraries.rxjava2
+	implementation libraries.object_mapper
+	implementation libraries.javax_validation
+
     implementation 'io.dropwizard.metrics:metrics-jvm:4.0.2'
     implementation 'io.dropwizard.metrics:metrics-jmx:4.0.2'
 	implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.9.7'
-	implementation libraries.object_mapper
-	implementation libraries.javax_validation
     implementation 'org.yaml:snakeyaml:1.15'
 
 }
