@@ -97,15 +97,15 @@ public class GuiceBundle<T extends Configuration> implements Bundle<T>, Logging 
 		// add the Validation module
 //		this.modules.add(new ImplicitValidationModule()); TODO - Anand
 		// add the Api module before Tracing module so that APIs are timed from the start of execution
-		this.modules.add(new ApiModule());
+//		this.modules.add(new ApiModule());
 		// add the Tracing module before Task module so that even Concurrent tasks can be traced
-		this.modules.add(new TracingModule());
+//		this.modules.add(new TracingModule());
 		// add the Task module
-		this.modules.add(new TaskModule());
+//		this.modules.add(new TaskModule());
 		// add the Dashboard module
-		this.modules.add(new DashboardModule(bootstrap));
+//		this.modules.add(new DashboardModule(bootstrap)); // TODO - anand uncomment
 		// add the Grpc Server module
-		this.modules.add(new ServerModule());
+//		this.modules.add(new ServerModule());
 		this.baseInjector = Guice.createInjector(this.modules);
 	}
 

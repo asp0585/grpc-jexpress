@@ -10,4 +10,4 @@ apiServiceConfig:
     acceptors: 5
     selectors: 10
     workers: 30
-    scheduledexecutor.threadpool.size: 1
+    scheduledExecutorThreadPoolSize: 1
