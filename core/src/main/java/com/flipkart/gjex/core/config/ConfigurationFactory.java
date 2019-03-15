@@ -1,9 +1,12 @@
 package com.flipkart.gjex.core.config;
 
+import org.apache.commons.lang3.tuple.Pair;
+
 import java.io.File;
 import java.io.IOException;
+import java.util.Map;
 
-public interface ConfigurationFactory<T> {
+public interface ConfigurationFactory<T, U extends Map> {
 
     /**
      * Loads, parses, binds, and validates a configuration object.
@@ -14,7 +17,7 @@ public interface ConfigurationFactory<T> {
      * @throws IOException            if there is an error reading the file
      * @throws ConfigurationException if there is an error parsing or validating the file
      */
-    T build(ConfigurationSourceProvider provider, String path) throws IOException, ConfigurationException;
+    Pair<T, U> build(ConfigurationSourceProvider provider, String path) throws IOException, ConfigurationException;
 
     /**
      * Loads, parses, binds, and validates a configuration object from a file.
@@ -24,7 +27,7 @@ public interface ConfigurationFactory<T> {
      * @throws IOException            if there is an error reading the file
      * @throws ConfigurationException if there is an error parsing or validating the file
      */
-    default T build(File file) throws IOException, ConfigurationException {
+    default Pair<T, U> build(File file) throws IOException, ConfigurationException {
         return build(new FileConfigurationSourceProvider(), file.toString());
     }
 
@@ -35,6 +38,6 @@ public interface ConfigurationFactory<T> {
      * @throws IOException            if there is an error reading the file
      * @throws ConfigurationException if there is an error parsing or validating the file
      */
-    T build() throws IOException, ConfigurationException;
+    Pair<T, U> build() throws IOException, ConfigurationException;
 
 }

@@ -19,7 +19,7 @@ publishing {
     		maven(MavenPublication) { 
 				groupId = 'com.flipkart'
 			    artifactId = 'grpc-jexpress'
-			    version = '1.2.6-SNAPSHOT'
+			    version = '1.2.7-SNAPSHOT'
 			    from components.java
 		}
     }    
@@ -40,7 +40,7 @@ def jacksonVersion = '2.9.7'
 subprojects {
 	apply plugin: 'maven'
 	group = 'com.flipkart.grpc-jexpress'
-	version = '1.2.6-ANAND-SNAPSHOT'
+	version = '1.2.7-ANAND-SNAPSHOT'
 	
 	jar {
     		manifest.attributes provider: 'gradle'

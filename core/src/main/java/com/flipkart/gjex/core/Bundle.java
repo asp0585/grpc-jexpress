@@ -16,14 +16,14 @@
 
 package com.flipkart.gjex.core;
 
-import java.util.List;
-
 import com.codahale.metrics.health.HealthCheck;
 import com.flipkart.gjex.core.filter.Filter;
 import com.flipkart.gjex.core.service.Service;
 import com.flipkart.gjex.core.setup.Bootstrap;
 import com.flipkart.gjex.core.setup.Environment;
 import com.flipkart.gjex.core.tracing.TracingSampler;
+
+import java.util.List;
 
 /**
  * A reusable bundle of functionality, used to define blocks of application behavior.
@@ -35,7 +35,7 @@ public interface Bundle<T extends Configuration> {
      *
      * @param bootstrap the application bootstrap
      */
-    void initialize(Bootstrap<?> bootstrap);
+    void initialize(Bootstrap<?, ?> bootstrap);
 
     /**
      * Runs this Bundle in the application environment.

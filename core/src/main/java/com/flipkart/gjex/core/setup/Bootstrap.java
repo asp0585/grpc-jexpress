@@ -41,6 +41,7 @@ import javax.validation.ValidatorFactory;
 import java.lang.management.ManagementFactory;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * The pre-start application container, containing services required to bootstrap a GJEX application
@@ -48,14 +49,14 @@ import java.util.List;
  * @author regu.b
  *
  */
-public class Bootstrap<T extends Configuration> implements Logging {
+public class Bootstrap<T extends Configuration, U extends Map> implements Logging {
 
-	private final Application<T> application;
+	private final Application<T, U> application;
 	private final MetricRegistry metricRegistry;
 	private final List<Bundle<? super T>> bundles;
 	private ClassLoader classLoader;
 	private final ObjectMapper objectMapper;
-	private ConfigurationFactoryFactory<T> configurationFactoryFactory;
+	private ConfigurationFactoryFactory<T, U> configurationFactoryFactory;
 
 	private ConfigurationSourceProvider configurationSourceProvider;
 	private ValidatorFactory validatorFactory;
@@ -73,7 +74,7 @@ public class Bootstrap<T extends Configuration> implements Logging {
 	/** The HealthCheckRegistry*/
 	private HealthCheckRegistry healthCheckRegistry;
 
-	public Bootstrap(Application<T> application) {
+	public Bootstrap(Application<T, U> application) {
 		this.application = application;
 		this.metricRegistry = new MetricRegistry();
 		this.bundles = Lists.newArrayList();
@@ -94,7 +95,7 @@ public class Bootstrap<T extends Configuration> implements Logging {
 	/**
 	 * Gets the bootstrap's Application
 	 */
-	public Application<T> getApplication() {
+	public Application<T, U> getApplication() {
 		return application;
 	}
 
@@ -142,11 +143,11 @@ public class Bootstrap<T extends Configuration> implements Logging {
 		return tracingSamplers;
 	}
 
-	public ConfigurationFactoryFactory<T> getConfigurationFactoryFactory() {
+	public ConfigurationFactoryFactory<T, U> getConfigurationFactoryFactory() {
 		return configurationFactoryFactory;
 	}
 
-	public void setConfigurationFactoryFactory(ConfigurationFactoryFactory<T> configurationFactoryFactory) {
+	public void setConfigurationFactoryFactory(ConfigurationFactoryFactory<T, U> configurationFactoryFactory) {
 		this.configurationFactoryFactory = configurationFactoryFactory;
 	}
 

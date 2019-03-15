@@ -75,7 +75,7 @@ public class GuiceBundle<T extends Configuration> implements Bundle<T>, Logging 
 	
 	@SuppressWarnings("rawtypes")
 	@Override
-	public void initialize(Bootstrap<?> bootstrap) {
+	public void initialize(Bootstrap<?, ?> bootstrap) {
 		// add the Config and Metrics MetricsInstrumentationModule
 		this.modules.add( new ConfigModule());
 		this.modules.add(MetricsInstrumentationModule.builder().withMetricRegistry(bootstrap.getMetricRegistry()).build());

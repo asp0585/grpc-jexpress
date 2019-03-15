@@ -21,12 +21,14 @@ import com.flipkart.gjex.core.logging.Logging;
 import com.flipkart.gjex.core.setup.Bootstrap;
 import com.flipkart.gjex.core.setup.Environment;
 import net.sourceforge.argparse4j.inf.Namespace;
+import org.apache.commons.lang3.tuple.Pair;
 
 import javax.validation.Validator;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.text.MessageFormat;
+import java.util.Map;
 
 /**
  * The base class for a GJEX application
@@ -34,7 +36,7 @@ import java.text.MessageFormat;
  * @author regu.b
  *
  */
-public abstract class Application<T extends Configuration> implements Logging {
+public abstract class Application<T extends Configuration, U extends Map> implements Logging {
 	
 	/** The GJEX startup display contents*/
 	private static final MessageFormat STARTUP_DISPLAY = new MessageFormat(
@@ -78,7 +80,7 @@ public abstract class Application<T extends Configuration> implements Logging {
 	 * by implementing this method.
 	 * @param bootstrap the Bootstrap for this Application
 	 */
-	public abstract void initialize(Bootstrap<T> bootstrap);
+	public abstract void initialize(Bootstrap<T, U> bootstrap);
 
 	/**
 	 * When the application runs, this is called after the {@link Bundle}s are run. Override it to add
@@ -101,7 +103,7 @@ public abstract class Application<T extends Configuration> implements Logging {
 		info("** GJEX starting up... **");
 		long start = System.currentTimeMillis();
 
-		final Bootstrap<T> bootstrap = new Bootstrap<>(this);
+		final Bootstrap<T, U> bootstrap = new Bootstrap<>(this);
 		/* Hook for applications to initialize their pre-start environment using bootstrap's properties */
         initialize(bootstrap);
 
@@ -109,11 +111,11 @@ public abstract class Application<T extends Configuration> implements Logging {
         Environment environment = new Environment(getName(), bootstrap.getMetricRegistry());
 
 		Namespace namespace = argumentParserWrapper.parseArguments(arguments);
-		configuration = parseConfiguration(bootstrap.getConfigurationFactoryFactory(), bootstrap.getConfigurationSourceProvider(),
+		Pair<T, U> pair = parseConfiguration(bootstrap.getConfigurationFactoryFactory(), bootstrap.getConfigurationSourceProvider(),
 				bootstrap.getValidatorFactory().getValidator(), namespace.getString("file"), getConfigurationClass(), bootstrap.getObjectMapper());
 
         /* Run bundles etc */
-        bootstrap.run(configuration, environment);
+        bootstrap.run(pair.getLeft(), environment);
         /* Run this Application */        
         run(configuration, environment);
 
@@ -126,13 +128,13 @@ public abstract class Application<T extends Configuration> implements Logging {
 		return Generics.getTypeParameter(getClass(), Configuration.class);
 	}
 
-	private T parseConfiguration(ConfigurationFactoryFactory<T> configurationFactoryFactory,
+	private Pair<T, U> parseConfiguration(ConfigurationFactoryFactory<T, U> configurationFactoryFactory,
 								 ConfigurationSourceProvider provider,
 								 Validator validator,
 								 String path,
 								 Class<T> klass,
 								 ObjectMapper objectMapper) throws IOException, ConfigurationException {
-		final ConfigurationFactory<T> configurationFactory = configurationFactoryFactory
+		final ConfigurationFactory<T, U> configurationFactory = configurationFactoryFactory
 				.create(klass, validator, objectMapper, "gjex");
 		if (path != null) {
 			return configurationFactory.build(provider, path);

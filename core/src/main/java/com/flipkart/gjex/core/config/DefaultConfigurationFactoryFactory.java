@@ -4,11 +4,12 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import javax.validation.Validator;
+import java.util.Map;
 
-public class DefaultConfigurationFactoryFactory<T> implements ConfigurationFactoryFactory<T> {
+public class DefaultConfigurationFactoryFactory<T, U extends Map> implements ConfigurationFactoryFactory<T, U> {
 
     @Override
-    public ConfigurationFactory<T> create(Class<T> klass, Validator validator, ObjectMapper objectMapper, String propertyPrefix) {
+    public ConfigurationFactory<T, U> create(Class<T> klass, Validator validator, ObjectMapper objectMapper, String propertyPrefix) {
         return new YamlConfigurationFactory<>(klass, validator, configureObjectMapper(objectMapper.copy()), propertyPrefix);
     }
 

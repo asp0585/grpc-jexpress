@@ -6,7 +6,9 @@ import com.flipkart.gjex.core.setup.Environment;
 import com.flipkart.gjex.guice.GuiceBundle;
 import com.flipkart.grpc.jexpress.module.SampleModule;
 
-public class SampleApplication extends Application<SampleConfiguration> {
+import java.util.Map;
+
+public class SampleApplication extends Application<SampleConfiguration, Map> {
 
     @Override
     public String getName() {
@@ -19,7 +21,7 @@ public class SampleApplication extends Application<SampleConfiguration> {
     }
 
     @Override
-    public void initialize(Bootstrap<SampleConfiguration> bootstrap) {
+    public void initialize(Bootstrap<SampleConfiguration, Map> bootstrap) {
         GuiceBundle<SampleConfiguration> guiceBundle = new GuiceBundle.Builder<SampleConfiguration>()
                 .addModules(new SampleModule())
                 .build();

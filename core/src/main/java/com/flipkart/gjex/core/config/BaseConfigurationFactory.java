@@ -3,6 +3,7 @@ package com.flipkart.gjex.core.config;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -16,6 +17,7 @@ import com.github.wnameless.json.flattener.JsonFlattener;
 import com.github.wnameless.json.flattener.PrintMode;
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
+import org.apache.commons.lang3.tuple.Pair;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
@@ -35,7 +37,7 @@ import static java.util.Objects.requireNonNull;
  *
  * @param <T> the type of the configuration objects to produce
  */
-public abstract class BaseConfigurationFactory<T> implements ConfigurationFactory<T> {
+public abstract class BaseConfigurationFactory<T, U extends Map> implements ConfigurationFactory<T, U> {
 
     private static final Pattern ESCAPED_COMMA_PATTERN = Pattern.compile("\\\\,");
     private static final Splitter ESCAPED_COMMA_SPLITTER = Splitter.on(Pattern.compile("(?<!\\\\),")).trimResults();
@@ -73,7 +75,7 @@ public abstract class BaseConfigurationFactory<T> implements ConfigurationFactor
     }
 
     @Override
-    public T build(ConfigurationSourceProvider provider, String path) throws IOException, ConfigurationException {
+    public Pair<T, U> build(ConfigurationSourceProvider provider, String path) throws IOException, ConfigurationException {
         try (InputStream input = provider.open(requireNonNull(path))) {
             final JsonNode node = objectMapper.readTree(createParser(input));
 
@@ -99,7 +101,7 @@ public abstract class BaseConfigurationFactory<T> implements ConfigurationFactor
     }
 
     @Override
-    public T build() throws IOException, ConfigurationException {
+    public Pair<T, U> build() throws IOException, ConfigurationException {
         try {
             final JsonNode node = objectMapper.valueToTree(klass.newInstance());
             return build(node, "default configuration");
@@ -109,7 +111,7 @@ public abstract class BaseConfigurationFactory<T> implements ConfigurationFactor
         }
     }
 
-    protected T build(JsonNode node, String path) throws IOException, ConfigurationException {
+    protected Pair<T, U> build(JsonNode node, String path) throws IOException, ConfigurationException {
         for (Map.Entry<Object, Object> pref : System.getProperties().entrySet()) {
             final String prefName = (String) pref.getKey();
             if (prefName.startsWith(propertyPrefix)) {
@@ -122,12 +124,12 @@ public abstract class BaseConfigurationFactory<T> implements ConfigurationFactor
                 .withSeparator('.')
                 .withPrintMode(PrintMode.PRETTY)
                 .flatten();
-        Map<String, Object> map = (Map<String, Object>) objectMapper.readValue(flattenedJsonString, Map.class);
-        
+        final U map = objectMapper.readValue(flattenedJsonString, new TypeReference<U>() {
+        });
         try {
             final T config = objectMapper.readValue(new TreeTraversingParser(node), klass);
             validate(path, config);
-            return config;
+            return Pair.of(config, map);
         } catch (UnrecognizedPropertyException e) {
             final List<String> properties = e.getKnownPropertyIds().stream()
                     .map(Object::toString)
