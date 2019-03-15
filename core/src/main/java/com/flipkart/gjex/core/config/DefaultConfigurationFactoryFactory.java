@@ -18,7 +18,7 @@ public class DefaultConfigurationFactoryFactory<T> implements ConfigurationFacto
      * is enabled to protect against misconfiguration.
      *
      * @param objectMapper template to be configured
-     * @return configured object mapper
+     * @return configured object objectMapper
      */
     protected ObjectMapper configureObjectMapper(ObjectMapper objectMapper) {
         return objectMapper.enable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);

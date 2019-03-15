@@ -19,7 +19,7 @@ publishing {
     		maven(MavenPublication) { 
 				groupId = 'com.flipkart'
 			    artifactId = 'grpc-jexpress'
-			    version = '1.2.3-SNAPSHOT'
+			    version = '1.2.6-SNAPSHOT'
 			    from components.java
 		}
     }    
@@ -40,7 +40,7 @@ def jacksonVersion = '2.9.7'
 subprojects {
 	apply plugin: 'maven'
 	group = 'com.flipkart.grpc-jexpress'
-	version = '1.2.3-ANAND-SNAPSHOT'
+	version = '1.2.6-ANAND-SNAPSHOT'
 	
 	jar {
     		manifest.attributes provider: 'gradle'
@@ -52,7 +52,7 @@ subprojects {
 		    log4j: "org.apache.logging.log4j:log4j-core:2.5",
 		    log4j_slf4j: "org.apache.logging.log4j:log4j-slf4j-impl:2.5",
 		    commons_configuration: "commons-configuration:commons-configuration:1.10",
-		    guice: "com.google.inject:guice:4.2.0",
+		    guice: "com.google.inject:guice:4.2.2",
 		    yammer_metrics: "com.palominolabs.metrics:metrics-guice:4.0.0",
 		    yammer_healthchecks:"io.dropwizard.metrics:metrics-healthchecks:4.0.2",		    
 			grpc_netty: "io.grpc:grpc-netty:${grpcVersion}",

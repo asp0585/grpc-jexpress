@@ -12,6 +12,8 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import com.fasterxml.jackson.databind.node.TreeTraversingParser;
+import com.github.wnameless.json.flattener.JsonFlattener;
+import com.github.wnameless.json.flattener.PrintMode;
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 
@@ -42,7 +44,7 @@ public abstract class BaseConfigurationFactory<T> implements ConfigurationFactor
 
     private final Class<T> klass;
     private final String propertyPrefix;
-    protected final ObjectMapper mapper;
+    protected final ObjectMapper objectMapper;
     private final Validator validator;
     private final String formatName;
     private final JsonFactory parserFactory;
@@ -64,23 +66,16 @@ public abstract class BaseConfigurationFactory<T> implements ConfigurationFactor
                                     String propertyPrefix) {
         this.klass = klass;
         this.formatName = formatName;
-        this.propertyPrefix = (propertyPrefix == null || propertyPrefix.endsWith("."))
-                ? propertyPrefix : (propertyPrefix + '.');
-        // Sub-classes may choose to omit data-binding; if so, null ObjectMapper passed:
-        if (objectMapper == null) { // sub-class has no need for mapper
-            this.mapper = null;
-            this.parserFactory = null;
-        } else {
-            this.mapper = objectMapper;
-            this.parserFactory = parserFactory;
-        }
+        this.propertyPrefix = (propertyPrefix == null || propertyPrefix.endsWith(".")) ? propertyPrefix : (propertyPrefix + '.');
+        this.objectMapper = objectMapper;
+        this.parserFactory = parserFactory;
         this.validator = validator;
     }
 
     @Override
     public T build(ConfigurationSourceProvider provider, String path) throws IOException, ConfigurationException {
         try (InputStream input = provider.open(requireNonNull(path))) {
-            final JsonNode node = mapper.readTree(createParser(input));
+            final JsonNode node = objectMapper.readTree(createParser(input));
 
             if (node == null) {
                 throw ConfigurationParsingException
@@ -106,7 +101,7 @@ public abstract class BaseConfigurationFactory<T> implements ConfigurationFactor
     @Override
     public T build() throws IOException, ConfigurationException {
         try {
-            final JsonNode node = mapper.valueToTree(klass.newInstance());
+            final JsonNode node = objectMapper.valueToTree(klass.newInstance());
             return build(node, "default configuration");
         } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | SecurityException e) {
             throw new IllegalArgumentException("Unable create an instance " +
@@ -122,9 +117,15 @@ public abstract class BaseConfigurationFactory<T> implements ConfigurationFactor
                 addOverride(node, configName, System.getProperty(prefName));
             }
         }
-
+        // Create flattened json string
+        String flattenedJsonString = new JsonFlattener(objectMapper.writeValueAsString(node))
+                .withSeparator('.')
+                .withPrintMode(PrintMode.PRETTY)
+                .flatten();
+        Map<String, Object> map = (Map<String, Object>) objectMapper.readValue(flattenedJsonString, Map.class);
+        
         try {
-            final T config = mapper.readValue(new TreeTraversingParser(node), klass);
+            final T config = objectMapper.readValue(new TreeTraversingParser(node), klass);
             validate(path, config);
             return config;
         } catch (UnrecognizedPropertyException e) {
