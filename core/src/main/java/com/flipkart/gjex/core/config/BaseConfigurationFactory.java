@@ -27,9 +27,10 @@ import static java.util.Objects.requireNonNull;
 
 /**
  * A generic factory class for loading configuration files, binding them to configuration objects, and
- * validating their constraints. Allows for overriding configuration parameters from system properties.
+ * validating their constraints.
  *
  * @param <T> the type of the configuration objects to produce
+ * @param <U> Flattened json config as a map using "." as separator
  */
 public abstract class BaseConfigurationFactory<T, U extends Map> implements ConfigurationFactory<T, U> {
 
@@ -41,7 +42,7 @@ public abstract class BaseConfigurationFactory<T, U extends Map> implements Conf
 
     /**
      * Creates a new configuration factory for the given class.
-     *  @param parserFactory  the factory that creates the parser used
+     * @param parserFactory  the factory that creates the parser used
      * @param formatName     the name of the format parsed by this factory (used in exceptions)
      * @param klass          the configuration class
      * @param validator      the validator to use
@@ -101,12 +102,11 @@ public abstract class BaseConfigurationFactory<T, U extends Map> implements Conf
                 .withSeparator('.')
                 .withPrintMode(PrintMode.PRETTY)
                 .flatten();
-        final U map = objectMapper.readValue(flattenedJson, new TypeReference<U>() {
-        });
         try {
+            final U configMap = objectMapper.readValue(flattenedJson, new TypeReference<U>() {});
             final T config = objectMapper.readValue(new TreeTraversingParser(node), klass);
             validate(path, config);
-            return Pair.of(config, map);
+            return Pair.of(config, configMap);
         } catch (UnrecognizedPropertyException e) {
             final List<String> properties = e.getKnownPropertyIds().stream()
                     .map(Object::toString)

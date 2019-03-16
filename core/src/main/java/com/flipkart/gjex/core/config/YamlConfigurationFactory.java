@@ -8,9 +8,10 @@ import java.util.Map;
 
 /**
  * A factory class for loading YAML configuration files, binding them to configuration objects, and
- * validating their constraints. Allows for overriding configuration parameters from system properties.
+ * validating their constraints.
  *
  * @param <T> the type of the configuration objects to produce
+ * @param <U> Flattened json config as a map using "." as separator
  */
 public class YamlConfigurationFactory<T, U extends Map> extends BaseConfigurationFactory<T, U> {
 

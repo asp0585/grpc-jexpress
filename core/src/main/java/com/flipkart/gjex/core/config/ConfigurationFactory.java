@@ -13,7 +13,8 @@ public interface ConfigurationFactory<T, U extends Map> {
      *
      * @param provider the provider to to use for reading configuration files
      * @param path     the path of the configuration file
-     * @return a validated configuration object
+     * @return         A pair of validated configuration object (T) and flattened json config as map (U)
+     *
      * @throws IOException            if there is an error reading the file
      * @throws ConfigurationException if there is an error parsing or validating the file
      */
@@ -23,7 +24,7 @@ public interface ConfigurationFactory<T, U extends Map> {
      * Loads, parses, binds, and validates a configuration object from a file.
      *
      * @param file the path of the configuration file
-     * @return a validated configuration object
+     * @return     A pair of validated configuration object (T) and flattened json config as map (U)
      * @throws IOException            if there is an error reading the file
      * @throws ConfigurationException if there is an error parsing or validating the file
      */
@@ -34,7 +35,7 @@ public interface ConfigurationFactory<T, U extends Map> {
     /**
      * Loads, parses, binds, and validates a configuration object from an empty document.
      *
-     * @return a validated configuration object
+     * @return    A pair of validated configuration object (T) and flattened json config as map (U)
      * @throws IOException            if there is an error reading the file
      * @throws ConfigurationException if there is an error parsing or validating the file
      */
