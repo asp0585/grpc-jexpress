@@ -22,7 +22,7 @@ public class SampleApplication extends Application<SampleConfiguration, Map> {
 
     @Override
     public void initialize(Bootstrap<SampleConfiguration, Map> bootstrap) {
-        GuiceBundle<SampleConfiguration> guiceBundle = new GuiceBundle.Builder<SampleConfiguration>()
+        GuiceBundle<SampleConfiguration, Map> guiceBundle = new GuiceBundle.Builder<SampleConfiguration, Map>()
                 .addModules(new SampleModule())
                 .build();
         bootstrap.addBundle(guiceBundle);

@@ -15,29 +15,26 @@
  */
 package com.flipkart.gjex.guice.module;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.inject.Singleton;
-
-import org.aopalliance.intercept.MethodInterceptor;
-import org.aopalliance.intercept.MethodInvocation;
-import org.apache.commons.configuration.Configuration;
-
 import com.flipkart.gjex.core.logging.Logging;
 import com.flipkart.gjex.core.service.Api;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.matcher.AbstractMatcher;
 import com.google.inject.matcher.Matchers;
-
 import io.grpc.BindableService;
 import io.grpc.Context;
+import org.aopalliance.intercept.MethodInterceptor;
+import org.aopalliance.intercept.MethodInvocation;
+import org.apache.commons.configuration.Configuration;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 /**
  * A Guice {@link AbstractModule} for managing interception of methods annotated with {@link Api}
@@ -56,16 +53,19 @@ public class ApiModule<T> extends AbstractModule implements Logging {
 	@Named("ApiScheduledExecutor")
 	@Provides
 	@Singleton
-	ScheduledExecutorService getScheduledExecutorService(@Named("Api.scheduledexecutor.threadpool.size")int threadpoolSize) {
-		return Executors.newScheduledThreadPool(threadpoolSize);
+//	ScheduledExecutorService getScheduledExecutorService(@Named("Api.scheduledExecutorThreadPoolSize")int threadpoolSize) {
+	ScheduledExecutorService getScheduledExecutorService(com.flipkart.gjex.core.Configuration configuration) {
+		return Executors.newScheduledThreadPool(configuration.getApiService().getScheduledExecutorThreadPoolSize());
 	}
 	
 	class ApiMethodInterceptor implements MethodInterceptor {
 		
-		@Inject @Named("GlobalConfig")
+		@Inject
+		@Named("GlobalConfig")
 		Configuration globalConfig;
 		
-		@Inject@Named("ApiScheduledExecutor")
+		@Inject
+		@Named("ApiScheduledExecutor")
 		ScheduledExecutorService scheduledExecutorService;
 		
 		@Override

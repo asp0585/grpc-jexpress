@@ -53,7 +53,7 @@ public class Bootstrap<T extends Configuration, U extends Map> implements Loggin
 
 	private final Application<T, U> application;
 	private final MetricRegistry metricRegistry;
-	private final List<Bundle<? super T>> bundles;
+	private final List<Bundle<? super T, ? super Map>> bundles;
 	private ClassLoader classLoader;
 	private final ObjectMapper objectMapper;
 	private ConfigurationFactoryFactory<T, U> configurationFactoryFactory;
@@ -62,14 +62,14 @@ public class Bootstrap<T extends Configuration, U extends Map> implements Loggin
 	private ValidatorFactory validatorFactory;
 
 	/** List of initialized Service instances*/
-	List<Service> services;
+	private List<Service> services;
 
 	/** List of initialized Filter instances*/
 	@SuppressWarnings("rawtypes")
-	List<Filter> filters;
+	private List<Filter> filters;
 
 	/** List of initialized ConfigurableTracingSampler instances*/
-	List<TracingSampler> tracingSamplers;
+	private List<TracingSampler> tracingSamplers;
 
 	/** The HealthCheckRegistry*/
 	private HealthCheckRegistry healthCheckRegistry;
@@ -118,7 +118,7 @@ public class Bootstrap<T extends Configuration, U extends Map> implements Loggin
      *
      * @param bundle a {@link Bundle}
      */
-    public void addBundle(Bundle<? super T> bundle) {
+    public void addBundle(Bundle<? super T, ? super Map> bundle) {
         bundle.initialize(this);
         bundles.add(bundle);
     }    
@@ -179,14 +179,14 @@ public class Bootstrap<T extends Configuration, U extends Map> implements Loggin
      * @throws Exception in case of errors during run
      */
     @SuppressWarnings("rawtypes")
-	public void run(T configuration, Environment environment) throws Exception {
+	public void run(T configuration, U configMap, Environment environment) throws Exception {
 		// Identify all Service implementations, start them and register for Runtime shutdown hook
         this.services = new LinkedList<Service>();
         this.filters = new LinkedList<Filter>();
         // Set the HealthCheckRegsitry to the one initialized by the Environment
         this.healthCheckRegistry = environment.getHealthCheckRegistry();
-        for (Bundle<? super T> bundle : bundles) {
-            bundle.run(configuration, environment);
+        for (Bundle<? super T, ? super Map> bundle : bundles) {
+            bundle.run(configuration, configMap, environment);
             services.addAll(bundle.getServices());
             filters.addAll(bundle.getFilters());
             this.tracingSamplers = bundle.getTracingSamplers();

@@ -15,14 +15,11 @@
  */
 package com.flipkart.gjex.core.setup;
 
+import com.codahale.metrics.MetricRegistry;
+
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;
-
-import com.codahale.metrics.MetricRegistry;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import javax.validation.Validator;
 
 /**
  * Represents a GJEX application environment 

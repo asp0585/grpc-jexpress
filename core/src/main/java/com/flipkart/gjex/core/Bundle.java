@@ -24,11 +24,12 @@ import com.flipkart.gjex.core.setup.Environment;
 import com.flipkart.gjex.core.tracing.TracingSampler;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * A reusable bundle of functionality, used to define blocks of application behavior.
  */
-public interface Bundle<T extends Configuration> {
+public interface Bundle<T extends Configuration, U extends Map> {
 	
     /**
      * Initializes this Bundle with the application bootstrap.
@@ -42,7 +43,7 @@ public interface Bundle<T extends Configuration> {
      *
      * @param environment the application environment
      */
-    void run(T configuration, Environment environment);
+    void run(T configuration, U configMap, Environment environment);
     
     /**
      * Returns Service instances loaded by this Bundle

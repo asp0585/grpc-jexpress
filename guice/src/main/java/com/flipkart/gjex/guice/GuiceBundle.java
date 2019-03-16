@@ -25,7 +25,9 @@ import com.flipkart.gjex.core.setup.Bootstrap;
 import com.flipkart.gjex.core.setup.Environment;
 import com.flipkart.gjex.core.tracing.TracingSampler;
 import com.flipkart.gjex.grpc.service.GrpcServer;
+import com.flipkart.gjex.guice.module.ApiModule;
 import com.flipkart.gjex.guice.module.ConfigModule;
+import com.flipkart.gjex.guice.module.ServerModule;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.inject.*;
@@ -34,6 +36,7 @@ import io.grpc.BindableService;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * A Guice GJEX Bundle implementation. Multiple Guice Modules may be added to this Bundle.
@@ -41,7 +44,7 @@ import java.util.List;
  * @author regu.b
  *
  */
-public class GuiceBundle<T extends Configuration> implements Bundle<T>, Logging {
+public class GuiceBundle<T extends Configuration, U extends Map> implements Bundle<T, U>, Logging {
 
 	private final List<Module> modules;
 	private Injector baseInjector;
@@ -51,18 +54,18 @@ public class GuiceBundle<T extends Configuration> implements Bundle<T>, Logging 
 	private List<HealthCheck> healthchecks;
 	private List<TracingSampler> tracingSamplers;
 	
-	public static class Builder<T extends Configuration> {
+	public static class Builder<T extends Configuration, U extends Map> {
 
 		private List<Module> modules = Lists.newArrayList();
 
-		public Builder<T> addModules(Module... moreModules) {
+		public Builder<T, U> addModules(Module... moreModules) {
 			for (Module module : moreModules) {
 				Preconditions.checkNotNull(module);
 				modules.add(module);
 			}
 			return this;
 		}
-		public GuiceBundle<T> build() {
+		public GuiceBundle<T, U> build() {
             return new GuiceBundle<>(this.modules);
         }
 	}
@@ -82,7 +85,7 @@ public class GuiceBundle<T extends Configuration> implements Bundle<T>, Logging 
 		// add the Validation module
 //		this.modules.add(new ImplicitValidationModule()); // TODO - Anand
 		// add the Api module before Tracing module so that APIs are timed from the start of execution
-//		this.modules.add(new ApiModule());
+		this.modules.add(new ApiModule());
 		// add the Tracing module before Task module so that even Concurrent tasks can be traced
 //		this.modules.add(new TracingModule());
 		// add the Task module
@@ -90,27 +93,30 @@ public class GuiceBundle<T extends Configuration> implements Bundle<T>, Logging 
 		// add the Dashboard module
 //		this.modules.add(new DashboardModule(bootstrap)); // TODO - anand uncomment
 		// add the Grpc Server module
-//		this.modules.add(new ServerModule());
-		this.baseInjector = Guice.createInjector(this.modules);
+		this.modules.add(new ServerModule());
+		baseInjector = Guice.createInjector(this.modules);
 	}
 
 	@Override
-	public void run(T configuration, Environment environment) {
-		GrpcServer grpcServer = this.baseInjector.getInstance(GrpcServer.class);
+	public void run(T configuration, U configMap, Environment environment) {
+
+		GrpcServer grpcServer = baseInjector.getInstance(GrpcServer.class);
 		// Add all Grpc Services to the Grpc Server
-		List<BindableService> services = this.getInstances(this.baseInjector, BindableService.class);
-		grpcServer.registerServices(services);
+		List<BindableService> bindableServices = getInstances(baseInjector, BindableService.class);
+		grpcServer.registerServices(bindableServices);
+
 		// Add all Grpc Filters to the Grpc Server
-		this.filters = this.getInstances(this.baseInjector, Filter.class);
-		grpcServer.registerFilters(this.filters, services);
+		filters = getInstances(baseInjector, Filter.class);
+		grpcServer.registerFilters(filters, bindableServices);
+
 		// Add all Grpc Filters to the Grpc Server
-		this.tracingSamplers = this.getInstances(this.baseInjector, TracingSampler.class);
-		grpcServer.registerTracingSamplers(this.tracingSamplers, services);
+		tracingSamplers = getInstances(baseInjector, TracingSampler.class);
+		grpcServer.registerTracingSamplers(tracingSamplers, bindableServices);
 		
 		// Lookup all Service implementations
-		this.services = this.getInstances(this.baseInjector, Service.class);
+		services = getInstances(baseInjector, Service.class);
 		// Lookup all HealthCheck implementations
-		this.healthchecks = this.getInstances(this.baseInjector, HealthCheck.class);		
+		healthchecks = getInstances(baseInjector, HealthCheck.class);
 	}	
 
 	@Override

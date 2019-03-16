@@ -120,11 +120,11 @@ public abstract class BaseConfigurationFactory<T, U extends Map> implements Conf
             }
         }
         // Create flattened json string
-        String flattenedJsonString = new JsonFlattener(objectMapper.writeValueAsString(node))
+        String flattenedJson = new JsonFlattener(objectMapper.writeValueAsString(node))
                 .withSeparator('.')
                 .withPrintMode(PrintMode.PRETTY)
                 .flatten();
-        final U map = objectMapper.readValue(flattenedJsonString, new TypeReference<U>() {
+        final U map = objectMapper.readValue(flattenedJson, new TypeReference<U>() {
         });
         try {
             final T config = objectMapper.readValue(new TreeTraversingParser(node), klass);

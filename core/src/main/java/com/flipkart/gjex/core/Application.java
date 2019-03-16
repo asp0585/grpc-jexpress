@@ -115,7 +115,7 @@ public abstract class Application<T extends Configuration, U extends Map> implem
 				bootstrap.getValidatorFactory().getValidator(), namespace.getString("file"), getConfigurationClass(), bootstrap.getObjectMapper());
 
         /* Run bundles etc */
-        bootstrap.run(pair.getLeft(), environment);
+        bootstrap.run(pair.getLeft(), pair.getRight(), environment);
         /* Run this Application */        
         run(configuration, environment);
 
@@ -131,13 +131,13 @@ public abstract class Application<T extends Configuration, U extends Map> implem
 	private Pair<T, U> parseConfiguration(ConfigurationFactoryFactory<T, U> configurationFactoryFactory,
 								 ConfigurationSourceProvider provider,
 								 Validator validator,
-								 String path,
+								 String configPath,
 								 Class<T> klass,
 								 ObjectMapper objectMapper) throws IOException, ConfigurationException {
 		final ConfigurationFactory<T, U> configurationFactory = configurationFactoryFactory
 				.create(klass, validator, objectMapper, "gjex");
-		if (path != null) {
-			return configurationFactory.build(provider, path);
+		if (configPath != null) {
+			return configurationFactory.build(provider, configPath);
 		}
 		return configurationFactory.build();
 	}
