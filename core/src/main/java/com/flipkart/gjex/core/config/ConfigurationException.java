@@ -29,6 +29,7 @@ import java.util.Collection;
  * </ul>
  */
 public abstract class ConfigurationException extends Exception {
+
     protected static final String NEWLINE = String.format("%n");
 
     private final Collection<String> errors;

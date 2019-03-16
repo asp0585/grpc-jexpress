@@ -95,26 +95,26 @@ public class GuiceBundle<T extends GJEXConfiguration, U extends Map> implements 
 			gjexEnvironmentModule = new GJEXEnvironmentModule<>(GJEXConfiguration.class, Map.class);
 		}
 		modules.add(gjexEnvironmentModule);
-		// add the Config and Metrics MetricsInstrumentationModule
-		this.modules.add(MetricsInstrumentationModule.builder().withMetricRegistry(bootstrap.getMetricRegistry()).build());
+		// add Metrics MetricsInstrumentationModule
+		modules.add(MetricsInstrumentationModule.builder().withMetricRegistry(bootstrap.getMetricRegistry()).build());
 		// add the Validation module
-		this.modules.add(new ImplicitValidationModule());
+		modules.add(new ImplicitValidationModule());
 		// add the Api module before Tracing module so that APIs are timed from the start of execution
-		this.modules.add(new ApiModule());
+		modules.add(new ApiModule());
 		// add the Tracing module before Task module so that even Concurrent tasks can be traced
-		this.modules.add(new TracingModule());
+		modules.add(new TracingModule());
 		// add the Task module
-		this.modules.add(new TaskModule());
+		modules.add(new TaskModule());
 		// add the Dashboard module
-		this.modules.add(new DashboardModule(bootstrap)); // TODO - anand uncomment
+		modules.add(new DashboardModule(bootstrap));
 		// add the Grpc Server module
-		this.modules.add(new ServerModule());
+		modules.add(new ServerModule());
 		baseInjector = Guice.createInjector(this.modules);
 	}
 
 	@Override
 	public void run(T configuration, U configMap, Environment environment) {
-		setEnvironment(configuration, configMap, environment);
+		setEnvironment(configuration, configMap, environment); // NOTE
 		GrpcServer grpcServer = baseInjector.getInstance(GrpcServer.class);
 
 		// Add all Grpc Services to the Grpc Server

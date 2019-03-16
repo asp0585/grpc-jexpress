@@ -50,21 +50,17 @@ public abstract class Application<T extends GJEXConfiguration, U extends Map> im
 	/** The machine name where this GJEX instance is running */
 	private String hostName;
 
-
-	private T configuration;
-
-	private final ArgumentParserWrapper argumentParserWrapper;
+	private final ArgumentParserWrapper argumentParser;
     /**
      * Constructor for this class
      */
     public Application() {
-    	this.argumentParserWrapper = new ArgumentParserWrapper();
-	    	try {
-	    		this.hostName = InetAddress.getLocalHost().getHostName();
-	    	} catch (UnknownHostException e) {
+    	this.argumentParser = new ArgumentParserWrapper();
+    	try {
+    		this.hostName = InetAddress.getLocalHost().getHostName();
+    	} catch (UnknownHostException e) {
 	    		//ignore the exception, not critical information
-	    	}
-
+    	}
     }
 	
 	/**
@@ -90,7 +86,7 @@ public abstract class Application<T extends GJEXConfiguration, U extends Map> im
 	 * @param environment   the application's {@link Environment}
 	 * @throws Exception if something goes wrong
 	 */
-	public abstract void run(T configuration, Environment environment) throws Exception;
+	public abstract void run(T configuration, U configMap, Environment environment) throws Exception;
 	
 	/**
 	 * Parses command-line arguments and runs this Application. Usually called from a {@code public
@@ -110,14 +106,18 @@ public abstract class Application<T extends GJEXConfiguration, U extends Map> im
         /* Create Environment */
         Environment environment = new Environment(getName(), bootstrap.getMetricRegistry());
 
-		Namespace namespace = argumentParserWrapper.parseArguments(arguments);
+		Namespace namespace = argumentParser.parseArguments(arguments);
+		String configFilePath = namespace.getString("file");
 		Pair<T, U> pair = parseConfiguration(bootstrap.getConfigurationFactoryFactory(), bootstrap.getConfigurationSourceProvider(),
-				bootstrap.getValidatorFactory().getValidator(), namespace.getString("file"), getConfigurationClass(), bootstrap.getObjectMapper());
+				bootstrap.getValidatorFactory().getValidator(), configFilePath, getConfigurationClass(), bootstrap.getObjectMapper());
+		T configuration = pair.getLeft();
+		U configMap = pair.getRight();
 
-        /* Run bundles etc */
-        bootstrap.run(pair.getLeft(), pair.getRight(), environment);
+		/* Run bundles etc */
+		bootstrap.run(configuration, configMap, environment);
+
         /* Run this Application */        
-        run(configuration, environment);
+        run(configuration, configMap, environment);
 
 	    final Object[] displayArgs = {this.getName(), (System.currentTimeMillis() - start), hostName};
 		info(STARTUP_DISPLAY.format(displayArgs));
@@ -135,7 +135,7 @@ public abstract class Application<T extends GJEXConfiguration, U extends Map> im
 								 Class<T> klass,
 								 ObjectMapper objectMapper) throws IOException, ConfigurationException {
 		final ConfigurationFactory<T, U> configurationFactory = configurationFactoryFactory
-				.create(klass, validator, objectMapper, "gjex");
+				.create(klass, validator, objectMapper);
 		if (configPath != null) {
 			return configurationFactory.build(provider, configPath);
 		}

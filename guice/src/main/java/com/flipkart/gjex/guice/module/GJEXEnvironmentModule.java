@@ -13,7 +13,9 @@ import java.util.Map;
 
 public class GJEXEnvironmentModule<T extends GJEXConfiguration, U extends Map> extends AbstractModule implements Logging {
 
-    private static final String ILLEGAL_GJEX_MODULE_STATE = "The GJEX environment has not yet been set. This is likely caused by trying to access GJEX environment during the bootstrap phase.";
+    private static final String ILLEGAL_GJEX_MODULE_STATE = "The GJEX environment has not been set yet. " +
+            "This is likely caused by trying to access GJEX environment during the bootstrap phase.";
+
     private T configuration;
     private U configMap;
     private Environment environment;
@@ -33,7 +35,7 @@ public class GJEXEnvironmentModule<T extends GJEXConfiguration, U extends Map> e
             bind(GJEXConfiguration.class).toProvider(provider);
         }
 
-        // bind FlattenedJsonMap
+        // bind flattened json map
         Provider<U> configMapProvider = new CustomConfigMapProvider();
         bind(configMapClass).annotatedWith(Names.named("FlattenedJsonConfig")).toProvider(configMapProvider);
     }

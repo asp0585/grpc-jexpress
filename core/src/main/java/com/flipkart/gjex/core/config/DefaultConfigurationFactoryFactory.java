@@ -9,7 +9,7 @@ import java.util.Map;
 public class DefaultConfigurationFactoryFactory<T, U extends Map> implements ConfigurationFactoryFactory<T, U> {
 
     @Override
-    public ConfigurationFactory<T, U> create(Class<T> klass, Validator validator, ObjectMapper objectMapper, String propertyPrefix) {
+    public ConfigurationFactory<T, U> create(Class<T> klass, Validator validator, ObjectMapper objectMapper) {
         return new YamlConfigurationFactory<>(klass, validator, configureObjectMapper(objectMapper.copy()));
     }
 

@@ -54,10 +54,11 @@ public class Bootstrap<T extends GJEXConfiguration, U extends Map> implements Lo
 	private final Application<T, U> application;
 	private final MetricRegistry metricRegistry;
 	private final List<Bundle<? super T, ? super U>> bundles;
-	private ClassLoader classLoader;
 	private final ObjectMapper objectMapper;
-	private ConfigurationFactoryFactory<T, U> configurationFactoryFactory;
 
+	private ClassLoader classLoader;
+
+	private ConfigurationFactoryFactory<T, U> configurationFactoryFactory;
 	private ConfigurationSourceProvider configurationSourceProvider;
 	private ValidatorFactory validatorFactory;
 
@@ -159,7 +160,6 @@ public class Bootstrap<T extends GJEXConfiguration, U extends Map> implements Lo
 		this.configurationSourceProvider = configurationSourceProvider;
 	}
 
-
 	public ValidatorFactory getValidatorFactory() {
 		return validatorFactory;
 	}
@@ -181,19 +181,20 @@ public class Bootstrap<T extends GJEXConfiguration, U extends Map> implements Lo
     @SuppressWarnings("rawtypes")
 	public void run(T configuration, U configMap, Environment environment) throws Exception {
 		// Identify all Service implementations, start them and register for Runtime shutdown hook
-        this.services = new LinkedList<Service>();
-        this.filters = new LinkedList<Filter>();
+        services = new LinkedList<Service>();
+        filters = new LinkedList<Filter>();
         // Set the HealthCheckRegsitry to the one initialized by the Environment
-        this.healthCheckRegistry = environment.getHealthCheckRegistry();
+        healthCheckRegistry = environment.getHealthCheckRegistry();
+
         for (Bundle<? super T, ? super U> bundle : bundles) {
             bundle.run(configuration, configMap, environment);
             services.addAll(bundle.getServices());
             filters.addAll(bundle.getFilters());
-            this.tracingSamplers = bundle.getTracingSamplers();
+            tracingSamplers = bundle.getTracingSamplers();
             // Register all HealthChecks with the HealthCheckRegistry
             bundle.getHealthChecks().forEach(hc -> this.healthCheckRegistry.register(hc.getClass().getSimpleName(), hc));
         }
-		this.services.forEach(service -> {
+		services.forEach(service -> {
 			try {
 				service.start();
 			} catch (Exception e) {
@@ -201,7 +202,7 @@ public class Bootstrap<T extends GJEXConfiguration, U extends Map> implements Lo
                 throw new RuntimeException(e);
 			}
 		});
-		this.filters.forEach(filter -> {
+		filters.forEach(filter -> {
 			try {
 				filter.init();
 			} catch (Exception e) {
@@ -209,7 +210,7 @@ public class Bootstrap<T extends GJEXConfiguration, U extends Map> implements Lo
                 throw new RuntimeException(e);
 			}
 		});
-		this.registerServicesForShutdown();
+		registerServicesForShutdown();
     }
 
     public HealthCheckRegistry getHealthCheckRegistry() {		

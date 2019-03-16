@@ -8,7 +8,6 @@ import java.util.Map;
 public interface ConfigurationFactoryFactory<T, U extends Map> {
 
     ConfigurationFactory<T, U> create(Class<T> klass,
-                                   Validator validator,
-                                   ObjectMapper objectMapper,
-                                   String propertyPrefix);
+                                      Validator validator,
+                                      ObjectMapper objectMapper);
 }

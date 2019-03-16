@@ -18,8 +18,8 @@ import java.util.*;
 public class ConfigurationParsingException extends ConfigurationException {
 
     static class Builder {
-        private static final int MAX_SUGGESTIONS = 5;
 
+        private static final int MAX_SUGGESTIONS = 5;
         private String summary;
         private String detail = "";
         private List<JsonMappingException.Reference> fieldPath = Collections.emptyList();
