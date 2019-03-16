@@ -15,16 +15,6 @@
  */
 package com.flipkart.gjex.guice.module;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-
-import org.aopalliance.intercept.MethodInterceptor;
-import org.aopalliance.intercept.MethodInvocation;
-import org.apache.commons.configuration.Configuration;
-
 import com.flipkart.gjex.core.logging.Logging;
 import com.flipkart.gjex.core.task.ConcurrentTask;
 import com.flipkart.gjex.core.task.FutureDecorator;
@@ -32,6 +22,14 @@ import com.flipkart.gjex.core.task.TaskExecutor;
 import com.google.inject.AbstractModule;
 import com.google.inject.matcher.AbstractMatcher;
 import com.google.inject.matcher.Matchers;
+import org.aopalliance.intercept.MethodInterceptor;
+import org.aopalliance.intercept.MethodInvocation;
+import org.apache.commons.configuration.Configuration;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
 
 /**
  * A Guice {@link AbstractModule} for managing interception of methods annotated with {@link ConcurrentTask}
@@ -49,7 +47,8 @@ public class TaskModule<T> extends AbstractModule implements Logging {
 	
 	class TaskMethodInterceptor implements MethodInterceptor {
 		
-		@Inject @Named("GlobalConfig")
+		@Inject
+		@Named("GlobalConfig")
 		Configuration globalConfig;
 		
 		@Override
