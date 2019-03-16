@@ -8,6 +8,7 @@ import com.flipkart.gjex.core.service.Service;
 import com.flipkart.gjex.core.setup.Bootstrap;
 import com.flipkart.gjex.core.setup.Environment;
 import com.flipkart.gjex.core.tracing.TracingSampler;
+import com.google.common.collect.Lists;
 
 import java.util.List;
 import java.util.Map;
@@ -29,21 +30,21 @@ public class ConfigServiceBundle<T extends GJEXConfiguration, U extends Map> imp
 
     @Override
     public List<Service> getServices() {
-        return null;
+        return Lists.newArrayList();
     }
 
     @Override
     public List<Filter> getFilters() {
-        return null;
+        return Lists.newArrayList();
     }
 
     @Override
     public List<HealthCheck> getHealthChecks() {
-        return null;
+        return Lists.newArrayList();
     }
 
     @Override
     public List<TracingSampler> getTracingSamplers() {
-        return null;
+        return Lists.newArrayList();
     }
 }

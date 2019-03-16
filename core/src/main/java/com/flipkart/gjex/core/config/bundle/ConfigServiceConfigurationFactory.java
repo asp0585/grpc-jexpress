@@ -42,7 +42,7 @@ public class ConfigServiceConfigurationFactory<T, U extends Map> extends BaseCon
                     .unflatten(); // returns Config service un-flattened json as Map
             InputStream stream = new ByteArrayInputStream(unFlattenedJson.getBytes(StandardCharsets.UTF_8));
             final JsonNode node = objectMapper.readTree(createParser(stream));
-            return build(node, path);
+            return super.build(node, path);
         } catch (JsonParseException e) {
             throw ConfigurationParsingException
                     .builder("Malformed Config service JSON")
