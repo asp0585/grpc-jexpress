@@ -16,7 +16,6 @@ import java.util.*;
  * A {@link ConfigurationException} for errors parsing a configuration file.
  */
 public class ConfigurationParsingException extends ConfigurationException {
-    private static final long serialVersionUID = 1L;
 
     static class Builder {
         private static final int MAX_SUGGESTIONS = 5;

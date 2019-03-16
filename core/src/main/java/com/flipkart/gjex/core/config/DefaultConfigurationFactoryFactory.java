@@ -10,7 +10,7 @@ public class DefaultConfigurationFactoryFactory<T, U extends Map> implements Con
 
     @Override
     public ConfigurationFactory<T, U> create(Class<T> klass, Validator validator, ObjectMapper objectMapper, String propertyPrefix) {
-        return new YamlConfigurationFactory<>(klass, validator, configureObjectMapper(objectMapper.copy()), propertyPrefix);
+        return new YamlConfigurationFactory<>(klass, validator, configureObjectMapper(objectMapper.copy()));
     }
 
     /**

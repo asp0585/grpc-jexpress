@@ -53,7 +53,7 @@ public class Bootstrap<T extends GJEXConfiguration, U extends Map> implements Lo
 
 	private final Application<T, U> application;
 	private final MetricRegistry metricRegistry;
-	private final List<Bundle<? super T, ? super Map>> bundles;
+	private final List<Bundle<? super T, ? super U>> bundles;
 	private ClassLoader classLoader;
 	private final ObjectMapper objectMapper;
 	private ConfigurationFactoryFactory<T, U> configurationFactoryFactory;
@@ -118,7 +118,7 @@ public class Bootstrap<T extends GJEXConfiguration, U extends Map> implements Lo
      *
      * @param bundle a {@link Bundle}
      */
-    public void addBundle(Bundle<? super T, ? super Map> bundle) {
+    public void addBundle(Bundle<? super T, ? super U> bundle) {
         bundle.initialize(this);
         bundles.add(bundle);
     }    
@@ -185,7 +185,7 @@ public class Bootstrap<T extends GJEXConfiguration, U extends Map> implements Lo
         this.filters = new LinkedList<Filter>();
         // Set the HealthCheckRegsitry to the one initialized by the Environment
         this.healthCheckRegistry = environment.getHealthCheckRegistry();
-        for (Bundle<? super T, ? super Map> bundle : bundles) {
+        for (Bundle<? super T, ? super U> bundle : bundles) {
             bundle.run(configuration, configMap, environment);
             services.addAll(bundle.getServices());
             filters.addAll(bundle.getFilters());
