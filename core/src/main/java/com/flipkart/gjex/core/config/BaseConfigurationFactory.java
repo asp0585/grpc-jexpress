@@ -81,7 +81,7 @@ public abstract class BaseConfigurationFactory<T, U extends Map> implements Conf
 
             if (node == null) {
                 throw ConfigurationParsingException
-                        .builder("Configuration at " + path + " must not be empty")
+                        .builder("GJEXConfiguration at " + path + " must not be empty")
                         .build(path);
             }
 

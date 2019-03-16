@@ -14,4 +14,7 @@ Api:
 student:
     name: Anand
     age: 1234
+Tracing:
+    collectorEndpoint: "http://localhost:9411/api/v2/spans"
+
 

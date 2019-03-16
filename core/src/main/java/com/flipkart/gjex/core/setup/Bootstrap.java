@@ -24,8 +24,8 @@ import com.codahale.metrics.jvm.ThreadStatesGaugeSet;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.flipkart.gjex.core.Application;
 import com.flipkart.gjex.core.Bundle;
-import com.flipkart.gjex.core.Configuration;
-import com.flipkart.gjex.core.GjexObjectMapper;
+import com.flipkart.gjex.core.GJEXConfiguration;
+import com.flipkart.gjex.core.GJEXObjectMapper;
 import com.flipkart.gjex.core.config.ConfigurationFactoryFactory;
 import com.flipkart.gjex.core.config.ConfigurationSourceProvider;
 import com.flipkart.gjex.core.config.DefaultConfigurationFactoryFactory;
@@ -49,7 +49,7 @@ import java.util.Map;
  * @author regu.b
  *
  */
-public class Bootstrap<T extends Configuration, U extends Map> implements Logging {
+public class Bootstrap<T extends GJEXConfiguration, U extends Map> implements Logging {
 
 	private final Application<T, U> application;
 	private final MetricRegistry metricRegistry;
@@ -78,7 +78,7 @@ public class Bootstrap<T extends Configuration, U extends Map> implements Loggin
 		this.application = application;
 		this.metricRegistry = new MetricRegistry();
 		this.bundles = Lists.newArrayList();
-		this.objectMapper = GjexObjectMapper.newObjectMapper();
+		this.objectMapper = GJEXObjectMapper.newObjectMapper();
 		this.classLoader = Thread.currentThread().getContextClassLoader();
 		this.configurationFactoryFactory = new DefaultConfigurationFactoryFactory<>();
 		this.configurationSourceProvider = new FileConfigurationSourceProvider();

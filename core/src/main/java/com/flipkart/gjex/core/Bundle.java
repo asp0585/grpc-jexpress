@@ -29,7 +29,7 @@ import java.util.Map;
 /**
  * A reusable bundle of functionality, used to define blocks of application behavior.
  */
-public interface Bundle<T extends Configuration, U extends Map> {
+public interface Bundle<T extends GJEXConfiguration, U extends Map> {
 	
     /**
      * Initializes this Bundle with the application bootstrap.

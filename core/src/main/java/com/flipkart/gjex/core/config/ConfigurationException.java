@@ -20,7 +20,7 @@ import java.util.Collection;
 
 
 /**
- * Base class for problems with a Configuration object.
+ * Base class for problems with a GJEXConfiguration object.
  * <p/>
  * Refer to the implementations for different classes of problems:
  * <ul>

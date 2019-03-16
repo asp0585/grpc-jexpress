@@ -36,7 +36,7 @@ import java.util.Map;
  * @author regu.b
  *
  */
-public abstract class Application<T extends Configuration, U extends Map> implements Logging {
+public abstract class Application<T extends GJEXConfiguration, U extends Map> implements Logging {
 	
 	/** The GJEX startup display contents*/
 	private static final MessageFormat STARTUP_DISPLAY = new MessageFormat(
@@ -86,7 +86,7 @@ public abstract class Application<T extends Configuration, U extends Map> implem
 	 * When the application runs, this is called after the {@link Bundle}s are run. Override it to add
 	 * providers, resources, etc. for your application.
 	 *
-	 * @param configuration the parsed {@link Configuration} object
+	 * @param configuration the parsed {@link GJEXConfiguration} object
 	 * @param environment   the application's {@link Environment}
 	 * @throws Exception if something goes wrong
 	 */
@@ -125,7 +125,7 @@ public abstract class Application<T extends Configuration, U extends Map> implem
 	    
 	}
 	public Class<T> getConfigurationClass() {
-		return Generics.getTypeParameter(getClass(), Configuration.class);
+		return Generics.getTypeParameter(getClass(), GJEXConfiguration.class);
 	}
 
 	private Pair<T, U> parseConfiguration(ConfigurationFactoryFactory<T, U> configurationFactoryFactory,

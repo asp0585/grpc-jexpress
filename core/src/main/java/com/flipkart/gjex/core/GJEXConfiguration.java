@@ -4,11 +4,12 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.flipkart.gjex.core.config.ApiService;
 import com.flipkart.gjex.core.config.DashboardService;
 import com.flipkart.gjex.core.config.GrpcConfig;
+import com.flipkart.gjex.core.config.Tracing;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
-public class Configuration {
+public class GJEXConfiguration {
 
     @Valid
     @NotNull
@@ -24,6 +25,11 @@ public class Configuration {
     @NotNull
     @JsonProperty("Dashboard")
     private DashboardService dashboardService;
+
+    @Valid
+    @NotNull
+    @JsonProperty("Tracing")
+    private Tracing tracing;
 
     public GrpcConfig getGrpc() {
         return grpc;
@@ -49,12 +55,21 @@ public class Configuration {
         this.dashboardService = dashboardService;
     }
 
+    public Tracing getTracing() {
+        return tracing;
+    }
+
+    public void setTracing(Tracing tracing) {
+        this.tracing = tracing;
+    }
+
     @Override
     public String toString() {
-        return "Configuration{" +
+        return "GJEXConfiguration{" +
                 "grpc=" + grpc +
                 ", apiService=" + apiService +
                 ", dashboardService=" + dashboardService +
+                ", tracing=" + tracing +
                 '}';
     }
 }

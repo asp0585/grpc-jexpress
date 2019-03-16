@@ -3,9 +3,9 @@ package com.flipkart.gjex.core;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class GjexObjectMapper {
+public class GJEXObjectMapper {
 
-    private GjexObjectMapper() { /* singleton */ }
+    private GJEXObjectMapper() { /* singleton */ }
 
     /**
      * Creates a new {@link ObjectMapper}
