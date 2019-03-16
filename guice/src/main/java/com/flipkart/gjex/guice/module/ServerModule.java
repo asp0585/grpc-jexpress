@@ -16,6 +16,7 @@
 
 package com.flipkart.gjex.guice.module;
 
+import com.flipkart.gjex.core.config.FlattenedJsonConfiguration;
 import com.flipkart.gjex.core.service.Service;
 import com.flipkart.gjex.grpc.interceptor.FilterInterceptor;
 import com.flipkart.gjex.grpc.interceptor.TracingInterceptor;
@@ -29,6 +30,7 @@ import org.apache.commons.configuration.Configuration;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
+import java.util.Map;
 
 /**
  * <code>ServerModule</code> is a Guice {@link AbstractModule} implementation used for configuring the Grpc Server and Dashboard server.
@@ -39,15 +41,19 @@ import javax.inject.Singleton;
 public class ServerModule extends AbstractModule {
 
 	public ServerModule() {}
-	
+
+
+	/**
+	 * Returns the Global config of all flattened out properties loaded by instances of this class.
+	 */
 	@Named("GlobalConfig")
 	@Provides
 	@Singleton
-	/** Returns the Global config of all flattened out properties loaded by instances of this class. Doing this here as multiple ConfigModule can be instantiated */
-	Configuration getGlobalConfiguration() {
-		return ConfigModule.getGlobalConfig();
+	public Configuration getGlobalConfiguration(@Named("FlattenedJsonConfig") Map configMap) {
+		Configuration configuration = new FlattenedJsonConfiguration((Map<String, Object>) configMap);
+		return configuration;
 	}
-	
+
 	@Override
     protected void configure() {		
 		bind(FilterInterceptor.class).annotatedWith(Names.named("FilterInterceptor")).to(FilterInterceptor.class);

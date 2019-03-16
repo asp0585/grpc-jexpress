@@ -30,6 +30,7 @@ import com.flipkart.gjex.core.web.HealthCheckResource;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.netflix.hystrix.contrib.metrics.eventstream.HystrixMetricsStreamServlet;
+import org.apache.commons.configuration.Configuration;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.servlet.DefaultServlet;
@@ -45,7 +46,6 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 import java.net.URI;
 import java.net.URL;
-import java.util.Map;
 
 /**
  * <code>DashboardModule</code> is a Guice {@link AbstractModule} implementation used for wiring GJEX Dashboard components.
@@ -69,10 +69,10 @@ public class DashboardModule extends AbstractModule implements Logging {
 	@Provides
 	@Singleton
 	Server getDashboardJettyServer(@Named("DashboardResourceConfig") ResourceConfig resourceConfig,
-								   GJEXConfiguration configuration, ObjectMapper objectMapper,
-								   @Named("FlattenedJsonConfig") Map configMap) {
-		DashboardService dashboardService = configuration.getDashboardService();
-		int acceptorThreads = (int) configMap.get("Dashboard.acceptors");
+								   GJEXConfiguration gjexConfiguration, ObjectMapper objectMapper,
+								   @Named("GlobalConfig") Configuration configuration) {
+		DashboardService dashboardService = gjexConfiguration.getDashboardService();
+		int acceptorThreads = configuration.getInt("Dashboard.acceptors");
 		int port = dashboardService.getPort();
 		int selectorThreads = dashboardService.getSelectors();
 		int maxWorkerThreads = dashboardService.getWorkers();
@@ -129,8 +129,7 @@ public class DashboardModule extends AbstractModule implements Logging {
 	@Named("APIJettyServer")
 	@Provides
 	@Singleton
-	Server getAPIJettyServer(@Named("HealthCheckResourceConfig") ResourceConfig resourceConfig,
-							 GJEXConfiguration configuration,
+	Server getAPIJettyServer(@Named("HealthCheckResourceConfig") ResourceConfig resourceConfig, GJEXConfiguration configuration,
 							 ObjectMapper objectMapper) {
 		ApiService apiService = configuration.getApiService();
 		int acceptorThreads = apiService.getAcceptors();

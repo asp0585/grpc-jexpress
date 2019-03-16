@@ -39,7 +39,6 @@ import java.util.Set;
 public class YamlConfiguration extends AbstractConfiguration {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(YamlConfiguration.class);
-
     private Map<String, Object> configTab = new HashMap<>();
 
     public YamlConfiguration() {}

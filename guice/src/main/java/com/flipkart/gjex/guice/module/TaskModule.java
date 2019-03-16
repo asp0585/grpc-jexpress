@@ -20,6 +20,7 @@ import com.flipkart.gjex.core.task.ConcurrentTask;
 import com.flipkart.gjex.core.task.FutureDecorator;
 import com.flipkart.gjex.core.task.TaskExecutor;
 import com.google.inject.AbstractModule;
+import com.google.inject.Provider;
 import com.google.inject.matcher.AbstractMatcher;
 import com.google.inject.matcher.Matchers;
 import org.aopalliance.intercept.MethodInterceptor;
@@ -49,11 +50,12 @@ public class TaskModule<T> extends AbstractModule implements Logging {
 		
 		@Inject
 		@Named("GlobalConfig")
-		Configuration globalConfig;
+		private Provider<Configuration> globalConfigurationProvider;
 		
 		@Override
 		public Object invoke(MethodInvocation invocation) throws Throwable {
 			ConcurrentTask task = invocation.getMethod().getAnnotation(ConcurrentTask.class);
+			Configuration globalConfig = globalConfigurationProvider.get();
 			int timeout = 0;
 			if (task.timeoutConfig().length() > 0) { // check if timeout is specified as a config property
 				timeout = globalConfig.getInt(task.timeoutConfig());
