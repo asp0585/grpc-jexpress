@@ -90,9 +90,9 @@ public class GuiceBundle<T extends GJEXConfiguration, U extends Map> implements 
 	@Override
 	public void initialize(Bootstrap<?, ?> bootstrap) {
 		if (configurationClass.isPresent()) {
-			gjexEnvironmentModule = new GJEXEnvironmentModule<>(configurationClass.get());
+			gjexEnvironmentModule = new GJEXEnvironmentModule<>(configurationClass.get(), Map.class);
 		} else {
-			gjexEnvironmentModule = new GJEXEnvironmentModule<>(GJEXConfiguration.class);
+			gjexEnvironmentModule = new GJEXEnvironmentModule<>(GJEXConfiguration.class, Map.class);
 		}
 		modules.add(gjexEnvironmentModule);
 		// add the Config and Metrics MetricsInstrumentationModule
@@ -114,7 +114,7 @@ public class GuiceBundle<T extends GJEXConfiguration, U extends Map> implements 
 
 	@Override
 	public void run(T configuration, U configMap, Environment environment) {
-		setEnvironment(configuration, environment);
+		setEnvironment(configuration, configMap, environment);
 		GrpcServer grpcServer = baseInjector.getInstance(GrpcServer.class);
 
 		// Add all Grpc Services to the Grpc Server
@@ -135,8 +135,8 @@ public class GuiceBundle<T extends GJEXConfiguration, U extends Map> implements 
 		healthchecks = getInstances(baseInjector, HealthCheck.class);
 	}
 
-	private void setEnvironment(final T configuration, final Environment environment) {
-		gjexEnvironmentModule.setEnvironmentData(configuration, environment);
+	private void setEnvironment(final T configuration, final U configMap, final Environment environment) {
+		gjexEnvironmentModule.setEnvironmentData(configuration, configMap, environment);
 	}
 
 	@Override
