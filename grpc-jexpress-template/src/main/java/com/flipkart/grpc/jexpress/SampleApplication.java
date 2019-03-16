@@ -1,6 +1,7 @@
 package com.flipkart.grpc.jexpress;
 
 import com.flipkart.gjex.core.Application;
+import com.flipkart.gjex.core.config.bundle.ConfigServiceBundle;
 import com.flipkart.gjex.core.setup.Bootstrap;
 import com.flipkart.gjex.core.setup.Environment;
 import com.flipkart.gjex.guice.GuiceBundle;
@@ -16,12 +17,13 @@ public class SampleApplication extends Application<SampleConfiguration, Map> {
     }
 
     @Override
-    public void run(SampleConfiguration configuration, Environment environment) throws Exception {
+    public void run(SampleConfiguration configuration, Map configMap, Environment environment) throws Exception {
 
     }
 
     @Override
     public void initialize(Bootstrap<SampleConfiguration, Map> bootstrap) {
+        bootstrap.addBundle(new ConfigServiceBundle<>());
         GuiceBundle<SampleConfiguration, Map> guiceBundle = new GuiceBundle.Builder<SampleConfiguration, Map>()
                 .setConfigClass(SampleConfiguration.class)
                 .addModules(new SampleModule())

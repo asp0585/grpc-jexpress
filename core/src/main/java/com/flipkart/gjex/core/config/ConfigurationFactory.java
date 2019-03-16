@@ -1,5 +1,7 @@
 package com.flipkart.gjex.core.config;
 
+import com.github.wnameless.json.flattener.JsonFlattener;
+import com.github.wnameless.json.flattener.PrintMode;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.io.File;
@@ -13,8 +15,7 @@ public interface ConfigurationFactory<T, U extends Map> {
      *
      * @param provider the provider to to use for reading configuration files
      * @param path     the path of the configuration file
-     * @return         A pair of validated configuration object (T) and flattened json config as map (U)
-     *
+     * @return A pair of validated configuration object (T) and flattened json config as map (U)
      * @throws IOException            if there is an error reading the file
      * @throws ConfigurationException if there is an error parsing or validating the file
      */
@@ -24,7 +25,7 @@ public interface ConfigurationFactory<T, U extends Map> {
      * Loads, parses, binds, and validates a configuration object from a file.
      *
      * @param file the path of the configuration file
-     * @return     A pair of validated configuration object (T) and flattened json config as map (U)
+     * @return A pair of validated configuration object (T) and flattened json config as map (U)
      * @throws IOException            if there is an error reading the file
      * @throws ConfigurationException if there is an error parsing or validating the file
      */
@@ -35,10 +36,24 @@ public interface ConfigurationFactory<T, U extends Map> {
     /**
      * Loads, parses, binds, and validates a configuration object from an empty document.
      *
-     * @return    A pair of validated configuration object (T) and flattened json config as map (U)
+     * @return A pair of validated configuration object (T) and flattened json config as map (U)
      * @throws IOException            if there is an error reading the file
      * @throws ConfigurationException if there is an error parsing or validating the file
      */
     Pair<T, U> build() throws IOException, ConfigurationException;
+
+    /**
+     * This function returns a flattened json for for provided json as string
+     *
+     * @param json string
+     * @return flattened json as string
+     * This is used to generate flattened json from given config file
+     */
+    default String getFlattenedJson(String json) {
+        return new JsonFlattener(json)
+                .withSeparator('.')
+                .withPrintMode(PrintMode.PRETTY)
+                .flatten();
+    }
 
 }

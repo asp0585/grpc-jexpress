@@ -17,7 +17,7 @@ import java.util.*;
  */
 public class ConfigurationParsingException extends ConfigurationException {
 
-    static class Builder {
+    public static class Builder {
 
         private static final int MAX_SUGGESTIONS = 5;
         private String summary;
@@ -183,58 +183,58 @@ public class ConfigurationParsingException extends ConfigurationException {
             return cause != null;
         }
 
-        Builder setCause(Exception cause) {
+        public Builder setCause(Exception cause) {
             this.cause = cause;
             return this;
         }
 
-        Builder setDetail(String detail) {
+        public Builder setDetail(String detail) {
             this.detail = detail;
             return this;
         }
 
-        Builder setFieldPath(List<JsonMappingException.Reference> fieldPath) {
+        public Builder setFieldPath(List<JsonMappingException.Reference> fieldPath) {
             this.fieldPath = fieldPath;
             return this;
         }
 
-        Builder setLocation(JsonLocation location) {
+        public Builder setLocation(JsonLocation location) {
             return location == null
                     ? this
                     : setLocation(location.getLineNr(), location.getColumnNr());
         }
 
-        Builder setLocation(Mark mark) {
+        public Builder setLocation(Mark mark) {
             return mark == null
                     ? this
                     : setLocation(mark.getLine(), mark.getColumn());
         }
 
-        Builder setLocation(int line, int column) {
+        public Builder setLocation(int line, int column) {
             this.line = line;
             this.column = column;
             return this;
         }
 
-        Builder addSuggestion(String suggestion) {
+        public Builder addSuggestion(String suggestion) {
             this.suggestionsSorted = false;
             this.suggestions.add(suggestion);
             return this;
         }
 
-        Builder addSuggestions(Collection<String> suggestions) {
+        public Builder addSuggestions(Collection<String> suggestions) {
             this.suggestionsSorted = false;
             this.suggestions.addAll(suggestions);
             return this;
         }
 
-        Builder setSuggestionBase(String base) {
+        public Builder setSuggestionBase(String base) {
             this.suggestionBase = base;
             this.suggestionsSorted = false;
             return this;
         }
 
-        ConfigurationParsingException build(String path) {
+        public ConfigurationParsingException build(String path) {
             final StringBuilder sb = new StringBuilder(getSummary());
             if (hasFieldPath()) {
                 sb.append(" at: ").append(buildPath(getFieldPath()));
@@ -349,7 +349,7 @@ public class ConfigurationParsingException extends ConfigurationException {
      *
      * @return a mutable builder to incrementally build a {@link ConfigurationParsingException}.
      */
-    static Builder builder(String brief) {
+    public static Builder builder(String brief) {
         return new Builder(brief);
     }
 

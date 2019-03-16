@@ -10,8 +10,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
 import com.fasterxml.jackson.databind.node.TreeTraversingParser;
-import com.github.wnameless.json.flattener.JsonFlattener;
-import com.github.wnameless.json.flattener.PrintMode;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.validation.ConstraintViolation;
@@ -34,7 +32,7 @@ import static java.util.Objects.requireNonNull;
  */
 public abstract class BaseConfigurationFactory<T, U extends Map> implements ConfigurationFactory<T, U> {
 
-    private final Class<T> klass;
+    protected final Class<T> klass;
     protected final ObjectMapper objectMapper;
     private final Validator validator;
     private final String formatName;
@@ -63,13 +61,11 @@ public abstract class BaseConfigurationFactory<T, U extends Map> implements Conf
     public Pair<T, U> build(ConfigurationSourceProvider provider, String path) throws IOException, ConfigurationException {
         try (InputStream input = provider.open(requireNonNull(path))) {
             final JsonNode node = objectMapper.readTree(createParser(input));
-
             if (node == null) {
                 throw ConfigurationParsingException
                         .builder("GJEXConfiguration at " + path + " must not be empty")
                         .build(path);
             }
-
             return build(node, path);
         } catch (JsonParseException e) {
             throw ConfigurationParsingException
@@ -98,10 +94,7 @@ public abstract class BaseConfigurationFactory<T, U extends Map> implements Conf
 
     protected Pair<T, U> build(JsonNode node, String path) throws IOException, ConfigurationException {
         // Create flattened json string
-        String flattenedJson = new JsonFlattener(objectMapper.writeValueAsString(node))
-                .withSeparator('.')
-                .withPrintMode(PrintMode.PRETTY)
-                .flatten();
+        String flattenedJson = getFlattenedJson(objectMapper.writeValueAsString(node));
         try {
             final U configMap = objectMapper.readValue(flattenedJson, new TypeReference<U>() {});
             final T config = objectMapper.readValue(new TreeTraversingParser(node), klass);
