@@ -20,8 +20,8 @@ import com.flipkart.gjex.core.config.*;
 import com.flipkart.gjex.core.logging.Logging;
 import com.flipkart.gjex.core.setup.Bootstrap;
 import com.flipkart.gjex.core.setup.Environment;
+import javafx.util.Pair;
 import net.sourceforge.argparse4j.inf.Namespace;
-import org.apache.commons.lang3.tuple.Pair;
 
 import javax.validation.Validator;
 import java.io.IOException;
@@ -110,8 +110,8 @@ public abstract class Application<T extends GJEXConfiguration, U extends Map> im
 		String configFilePath = namespace.getString("file");
 		Pair<T, U> pair = parseConfiguration(bootstrap.getConfigurationFactoryFactory(), bootstrap.getConfigurationSourceProvider(),
 				bootstrap.getValidatorFactory().getValidator(), configFilePath, getConfigurationClass(), bootstrap.getObjectMapper());
-		T configuration = pair.getLeft();
-		U configMap = pair.getRight();
+		T configuration = pair.getKey();
+		U configMap = pair.getValue();
 
 		/* Run bundles etc */
 		bootstrap.run(configuration, configMap, environment);

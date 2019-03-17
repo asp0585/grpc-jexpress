@@ -10,7 +10,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
 import com.fasterxml.jackson.databind.node.TreeTraversingParser;
-import org.apache.commons.lang3.tuple.Pair;
+import com.flipkart.gjex.core.GJEXConfiguration;
+import javafx.util.Pair;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
@@ -30,12 +31,12 @@ import static java.util.Objects.requireNonNull;
  * @param <T> the type of the configuration objects to produce
  * @param <U> Flattened json config as a map using "." as separator
  */
-public abstract class BaseConfigurationFactory<T, U extends Map> implements ConfigurationFactory<T, U> {
+public abstract class BaseConfigurationFactory<T extends GJEXConfiguration, U extends Map> implements ConfigurationFactory<T, U> {
 
     protected final Class<T> klass;
     protected final ObjectMapper objectMapper;
     private final Validator validator;
-    private final String formatName;
+    protected final String formatName;
     private final JsonFactory parserFactory;
 
     /**
@@ -99,7 +100,7 @@ public abstract class BaseConfigurationFactory<T, U extends Map> implements Conf
             final U configMap = objectMapper.readValue(flattenedJson, new TypeReference<U>() {});
             final T config = objectMapper.readValue(new TreeTraversingParser(node), klass);
             validate(path, config);
-            return Pair.of(config, configMap);
+            return new Pair<>(config, configMap);
         } catch (UnrecognizedPropertyException e) {
             final List<String> properties = e.getKnownPropertyIds().stream()
                     .map(Object::toString)

@@ -1,14 +1,15 @@
 package com.flipkart.gjex.core.config;
 
+import com.flipkart.gjex.core.GJEXConfiguration;
 import com.github.wnameless.json.flattener.JsonFlattener;
 import com.github.wnameless.json.flattener.PrintMode;
-import org.apache.commons.lang3.tuple.Pair;
+import javafx.util.Pair;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Map;
 
-public interface ConfigurationFactory<T, U extends Map> {
+public interface ConfigurationFactory<T extends GJEXConfiguration, U extends Map> {
 
     /**
      * Loads, parses, binds, and validates a configuration object.

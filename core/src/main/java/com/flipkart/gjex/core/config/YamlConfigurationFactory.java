@@ -2,6 +2,7 @@ package com.flipkart.gjex.core.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import com.flipkart.gjex.core.GJEXConfiguration;
 
 import javax.validation.Validator;
 import java.util.Map;
@@ -13,13 +14,14 @@ import java.util.Map;
  * @param <T> the type of the configuration objects to produce
  * @param <U> Flattened json config as a map using "." as separator
  */
-public class YamlConfigurationFactory<T, U extends Map> extends BaseConfigurationFactory<T, U> {
+public class YamlConfigurationFactory<T extends GJEXConfiguration, U extends Map> extends BaseConfigurationFactory<T, U> {
 
     /**
      * Creates a new configuration factory for the given class.
-     *  @param klass          the configuration class
-     * @param validator      the validator to use
-     * @param objectMapper   the Jackson {@link ObjectMapper} to use
+     *
+     * @param klass        the configuration class
+     * @param validator    the validator to use
+     * @param objectMapper the Jackson {@link ObjectMapper} to use
      */
     public YamlConfigurationFactory(Class<T> klass,
                                     Validator validator,

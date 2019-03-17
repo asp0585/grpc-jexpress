@@ -1,15 +1,17 @@
 package com.flipkart.gjex.core.config.bundle;
 
+import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.flipkart.gjex.core.GJEXConfiguration;
 import com.flipkart.gjex.core.config.BaseConfigurationFactory;
 import com.flipkart.gjex.core.config.ConfigurationException;
 import com.flipkart.gjex.core.config.ConfigurationParsingException;
 import com.flipkart.gjex.core.config.ConfigurationSourceProvider;
 import com.github.wnameless.json.unflattener.JsonUnflattener;
+import javafx.util.Pair;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.tuple.Pair;
 
 import javax.validation.Validator;
 import java.io.ByteArrayInputStream;
@@ -22,14 +24,14 @@ import java.util.Map;
 
 import static java.util.Objects.requireNonNull;
 
-public class ConfigServiceConfigurationFactory<T, U extends Map> extends BaseConfigurationFactory<T, U> {
+public class ConfigServiceConfigurationFactory<T extends GJEXConfiguration, U extends Map> extends BaseConfigurationFactory<T, U> {
 
     private final char jsonFlattenSeparator;
 
     public ConfigServiceConfigurationFactory(Class<T> klass,
                                              Validator validator,
                                              ObjectMapper objectMapper, char jsonFlattenSeparator) {
-        super(objectMapper.getFactory(), "JSON", klass, validator, objectMapper);
+        super(objectMapper.getFactory(), JsonFactory.FORMAT_NAME_JSON, klass, validator, objectMapper);
         this.jsonFlattenSeparator = jsonFlattenSeparator;
     }
 
@@ -45,7 +47,7 @@ public class ConfigServiceConfigurationFactory<T, U extends Map> extends BaseCon
             return super.build(node, path);
         } catch (JsonParseException e) {
             throw ConfigurationParsingException
-                    .builder("Malformed Config service JSON")
+                    .builder("Malformed Config service " + super.formatName)
                     .setCause(e)
                     .setLocation(e.getLocation())
                     .setDetail(e.getMessage())
