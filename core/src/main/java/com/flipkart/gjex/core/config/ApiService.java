@@ -1,19 +1,26 @@
 package com.flipkart.gjex.core.config;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import javax.validation.constraints.Min;
 
 public class ApiService {
 
     @Min(1)
+    @JsonProperty("service.port")
     private int port;
 
+    @JsonProperty("service.acceptors")
     private int acceptors;
 
+    @JsonProperty("service.selectors")
     private int selectors;
 
+    @JsonProperty("service.workers")
     private int workers;
 
     @Min(1)
+    @JsonProperty("scheduledexecutor.threadpool.size")
     private int scheduledExecutorThreadPoolSize;
 
     public int getPort() {

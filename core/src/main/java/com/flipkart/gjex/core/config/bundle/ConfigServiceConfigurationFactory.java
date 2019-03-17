@@ -36,9 +36,7 @@ public class ConfigServiceConfigurationFactory<T extends GJEXConfiguration, U ex
     public Pair<T, U> build(ConfigurationSourceProvider provider, String path) throws IOException, ConfigurationException {
         try (InputStream input = provider.open(requireNonNull(path))) {
             String flattenedJson = IOUtils.toString(input, Charset.defaultCharset()); // returns json present in config service as String
-            String unFlattenedJson = new JsonUnflattener(flattenedJson)
-                    .withSeparator(ConfigServiceBundle.JSON_FLATTEN_SEPARATOR)
-                    .unflatten(); // returns Config service un-flattened json as Map
+            String unFlattenedJson = getUnFlattenedJson(flattenedJson, ConfigServiceBundle.JSON_FLATTEN_SEPARATOR); // returns Config service un-flattened json as Map
             InputStream stream = new ByteArrayInputStream(unFlattenedJson.getBytes(StandardCharsets.UTF_8));
             final JsonNode node = objectMapper.readTree(super.createParser(stream));
             return super.build(node, path);

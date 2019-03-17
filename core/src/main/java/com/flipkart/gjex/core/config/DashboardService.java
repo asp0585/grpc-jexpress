@@ -1,10 +1,19 @@
 package com.flipkart.gjex.core.config;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class DashboardService {
 
+    @JsonProperty("service.port")
     private int port;
+
+    @JsonProperty("service.acceptors")
     private int acceptors;
+
+    @JsonProperty("service.selectors")
     private int selectors;
+
+    @JsonProperty("service.workers")
     private int workers;
 
     public int getPort() {

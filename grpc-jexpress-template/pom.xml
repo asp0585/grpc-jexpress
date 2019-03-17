@@ -137,6 +137,11 @@
             <artifactId>metrics-healthchecks</artifactId>
             <version>${metrics-healthchecks.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
+            <version>2.9.5</version>
+        </dependency>
     </dependencies>
 
     <repositories>
