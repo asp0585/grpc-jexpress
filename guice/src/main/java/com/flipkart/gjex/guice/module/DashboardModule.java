@@ -21,7 +21,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider;
 import com.flipkart.gjex.core.GJEXConfiguration;
 import com.flipkart.gjex.core.config.ApiService;
-import com.flipkart.gjex.core.config.DashboardService;
 import com.flipkart.gjex.core.logging.Logging;
 import com.flipkart.gjex.core.setup.Bootstrap;
 import com.flipkart.gjex.core.setup.HealthCheckRegistry;
@@ -69,13 +68,12 @@ public class DashboardModule extends AbstractModule implements Logging {
 	@Provides
 	@Singleton
 	Server getDashboardJettyServer(@Named("DashboardResourceConfig") ResourceConfig resourceConfig,
-								   GJEXConfiguration gjexConfiguration, ObjectMapper objectMapper,
+								   ObjectMapper objectMapper,
 								   @Named("GlobalConfig") Configuration configuration) {
-		DashboardService dashboardService = gjexConfiguration.getDashboardService();
 		int acceptorThreads = configuration.getInt("Dashboard.acceptors");
-		int port = dashboardService.getPort();
-		int selectorThreads = dashboardService.getSelectors();
-		int maxWorkerThreads = dashboardService.getWorkers();
+		int port = configuration.getInt("Dashboard.port");
+		int selectorThreads = configuration.getInt("Dashboard.selectors");
+		int maxWorkerThreads = configuration.getInt("Dashboard.workers");
 		JacksonJaxbJsonProvider provider = new JacksonJaxbJsonProvider();
 		provider.setMapper(objectMapper);
 		resourceConfig.register(provider);
