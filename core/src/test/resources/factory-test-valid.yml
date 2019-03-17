@@ -1,0 +1,20 @@
+Grpc:
+  port: 50051
+Dashboard:
+  port: 9999
+  acceptors: 5
+  selectors: 10
+  workers: 30
+Api:
+  port: 9998
+  acceptors: 5
+  selectors: 10
+  workers: 30
+  scheduledExecutorThreadPoolSize: 1
+Tracing:
+  collectorEndpoint: "http://localhost:9411/api/v2/spans"
+name: "GJEX"
+age: 12
+properties:
+  k1: v1
+  settings.enabled: true

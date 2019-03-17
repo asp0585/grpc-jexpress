@@ -97,8 +97,8 @@ public abstract class BaseConfigurationFactory<T extends GJEXConfiguration, U ex
         // Create flattened json string
         String flattenedJson = getFlattenedJson(objectMapper.writeValueAsString(node));
         try {
-            final U configMap = objectMapper.readValue(flattenedJson, new TypeReference<U>() {});
             final T config = objectMapper.readValue(new TreeTraversingParser(node), klass);
+            final U configMap = objectMapper.readValue(flattenedJson, new TypeReference<U>() {});
             validate(path, config);
             return new Pair<>(config, configMap);
         } catch (UnrecognizedPropertyException e) {
