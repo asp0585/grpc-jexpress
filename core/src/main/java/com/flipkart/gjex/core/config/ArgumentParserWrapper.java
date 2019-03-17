@@ -25,7 +25,7 @@ public class ArgumentParserWrapper {
                 .description("Runs grpc server");
         final Subparser subparser = parser.addSubparsers().addParser("server", false);
         subparser.addArgument("file")
-                .nargs("*")
+                .nargs("?")
                 .help("Application configuration file");
         return parser;
     }
