@@ -26,24 +26,21 @@ import static java.util.Objects.requireNonNull;
 
 public class ConfigServiceConfigurationFactory<T extends GJEXConfiguration, U extends Map> extends BaseConfigurationFactory<T, U> {
 
-    private final char jsonFlattenSeparator;
-
     public ConfigServiceConfigurationFactory(Class<T> klass,
                                              Validator validator,
-                                             ObjectMapper objectMapper, char jsonFlattenSeparator) {
+                                             ObjectMapper objectMapper) {
         super(objectMapper.getFactory(), JsonFactory.FORMAT_NAME_JSON, klass, validator, objectMapper);
-        this.jsonFlattenSeparator = jsonFlattenSeparator;
     }
 
     @Override
     public Pair<T, U> build(ConfigurationSourceProvider provider, String path) throws IOException, ConfigurationException {
         try (InputStream input = provider.open(requireNonNull(path))) {
-            String configServiceJson = IOUtils.toString(input, Charset.defaultCharset()); // returns json present in config service as String
-            String unFlattenedJson = new JsonUnflattener(configServiceJson)
-                    .withSeparator(jsonFlattenSeparator)
+            String flattenedJson = IOUtils.toString(input, Charset.defaultCharset()); // returns json present in config service as String
+            String unFlattenedJson = new JsonUnflattener(flattenedJson)
+                    .withSeparator(ConfigServiceBundle.JSON_FLATTEN_SEPARATOR)
                     .unflatten(); // returns Config service un-flattened json as Map
             InputStream stream = new ByteArrayInputStream(unFlattenedJson.getBytes(StandardCharsets.UTF_8));
-            final JsonNode node = objectMapper.readTree(createParser(stream));
+            final JsonNode node = objectMapper.readTree(super.createParser(stream));
             return super.build(node, path);
         } catch (JsonParseException e) {
             throw ConfigurationParsingException

@@ -1,11 +1,19 @@
 package com.flipkart.gjex.core.config;
 
+import javax.validation.constraints.Min;
+
 public class ApiService {
 
+    @Min(1)
     private int port;
+
     private int acceptors;
+
     private int selectors;
+
     private int workers;
+
+    @Min(1)
     private int scheduledExecutorThreadPoolSize;
 
     public int getPort() {
