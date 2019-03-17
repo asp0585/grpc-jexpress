@@ -1,39 +1,36 @@
 package com.flipkart.gjex.core.config;
 
 import com.google.common.collect.Maps;
+import org.apache.commons.configuration.Configuration;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Map;
 import java.util.NoSuchElementException;
 
-import static org.junit.Assert.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class FlattenedJsonConfigurationTest {
 
-    private FlattenedJsonConfiguration configuration;
+    private Configuration configuration;
 
     @Before
     public void setUp() throws Exception {
         Map<String, Object> configMap = Maps.newHashMap();
         configMap.put("Grpc.port", 50051);
         configMap.put("Dashboard.port", 9999);
-        configMap.put("Dashboard.acceptors", 5);
-        configMap.put("Dashboard.workers", 5);
         configuration = new FlattenedJsonConfiguration(configMap);
     }
 
     @Test
     public void getKeySuccess() {
-        assertEquals(50051, configuration.getInt("Grpc.port"));
-        assertEquals(9999, configuration.getInt("Dashboard.port"));
+        assertThat(configuration.getInt("Grpc.port")).isEqualTo(50051);
+        assertThat(configuration.getInt("Dashboard.port")).isEqualTo(9999);
     }
 
-    @Test(expected = NoSuchElementException.class)
+    @Test
     public void getKeyFailure() {
-        assertEquals(50051, configuration.getInt("Grpc.key.does.not.exist"));
+        assertThatThrownBy(() -> configuration.getInt("Grpc.key.does.not.exist")).isInstanceOf(NoSuchElementException.class);
     }
-
-
-
 }
