@@ -1,0 +1,87 @@
+syntax = "proto3";
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/field_mask.proto";
+
+option java_multiple_files = true;
+option java_package = "com.flipkart.grpc.jexpress";
+option java_outer_classname = "HudsonServiceProto";
+option objc_class_prefix = "HLW";
+import "google/api/annotations.proto";
+
+package service;
+
+// https://developers.google.com/protocol-buffers/docs/proto3
+
+service HudsonService {
+    rpc Iterator (IteratorRequest) returns (IteratorResponse) {
+        option (google.api.http) = {
+                   post: "/sherlock/v1/stores/iterator"
+                   body: "*"
+               };
+    }
+}
+
+/*
+{
+	"store_path": "tyy/4io",
+	"q": "abc",
+	"products_start": 10,
+	"products_count": 20,
+	"redirection": true,
+	"facet_show": "all",
+	"sort": "price_asc",
+	"facets": {
+		"price_range": {
+			"from": "200",
+			"to": "100"
+		},
+		"promo": ["nb:mp:02927f2727", "nb:mp:02927f2728"],
+		"serviceability": true,
+		"discount_range_v1": ["50% or More", "10% or More"],
+		"name_values": [{
+			"name": "brand",
+			"values": ["Disney+Infinity", "Disney+Princess"]
+		}]
+	}
+}
+*/
+
+message IteratorRequest {
+
+    string store_path = 1;
+    string q = 2;
+    uint32 products_start = 3;
+    uint32 products_count = 4;
+    string pincode = 5;
+    bool redirection = 6;
+    string facet_show = 7;
+    Facet facets = 8;
+
+}
+
+// Specifying Facet
+message Facet {
+
+    PriceRange price_range = 1; // specifying price range
+    bool serviceability = 2;
+    bool availability = 3;
+    repeated string promo = 4; // specifying offerIds
+    repeated string discount_range_v1 = 5;
+    repeated NameValue name_values = 6;
+}
+
+message NameValue {
+    string name = 1;
+    repeated string values = 2;
+}
+
+message PriceRange {
+    string from = 1;
+    string to = 2;
+}
+
+// Iterator Response
+message IteratorResponse {
+
+}

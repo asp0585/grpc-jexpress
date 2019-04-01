@@ -2,12 +2,14 @@ package com.flipkart.grpc.jexpress;
 
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
+import io.grpc.Metadata;
+import io.grpc.stub.MetadataUtils;
 
 import java.util.concurrent.TimeUnit;
 
 public class SampleClient {
     private ManagedChannel channel;
-    private final UserServiceGrpc.UserServiceBlockingStub blockingStub;
+    private UserServiceGrpc.UserServiceBlockingStub blockingStub;
 
     public SampleClient(String host, int port) {
         this(ManagedChannelBuilder.forAddress(host, port).usePlaintext().build());
@@ -15,7 +17,14 @@ public class SampleClient {
 
     private SampleClient(ManagedChannel channel) {
         this.channel = channel;
+        // create a custom header
+        Metadata header=new Metadata();
+        Metadata.Key<String> key =
+                Metadata.Key.of("Grps-Matches-Key", Metadata.ASCII_STRING_MARSHALLER);
+        header.put(key, "match.items");
         this.blockingStub = UserServiceGrpc.newBlockingStub(channel);
+
+        this.blockingStub = MetadataUtils.attachHeaders(blockingStub, header);
     }
 
     private void shutdown() throws InterruptedException {
