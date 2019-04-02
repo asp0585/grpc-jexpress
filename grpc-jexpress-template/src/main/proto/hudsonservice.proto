@@ -20,17 +20,31 @@ service HudsonService {
                    body: "*"
                };
     }
+
+    rpc Filter (FilterRequest) returns (FilterResponse) {
+        option (google.api.http) = {
+                   post: "/sherlock/v1/stores/filter"
+                   body: "*"
+               };
+    }
 }
 
 /*
+Iterator POST request format:
 {
 	"store_path": "tyy/4io",
 	"q": "abc",
-	"products_start": 10,
-	"products_count": 20,
-	"redirection": true,
+	"products": {
+		"start": 10,
+		"count": 120,
+		"popularity_score": "true"
+	},
 	"facet_show": "all",
 	"sort": "price_asc",
+	"view": {
+		"id": "brand",
+		"param": "singer"
+	},
 	"facets": {
 		"price_range": {
 			"from": "200",
@@ -38,26 +52,59 @@ service HudsonService {
 		},
 		"promo": ["nb:mp:02927f2727", "nb:mp:02927f2728"],
 		"serviceability": true,
+		"availability": "Exclude out of stock",
 		"discount_range_v1": ["50% or More", "10% or More"],
 		"name_values": [{
 			"name": "brand",
 			"values": ["Disney+Infinity", "Disney+Princess"]
 		}]
-	}
+	},
+	"tags": ["womens-trimmers"],
+	"smart_classify": true,
+	"select": {
+	    "augment": true,
+	    "substores": false
+	},
+	"query": {
+	    "stub": true,
+	    "guide": false
+	 }
 }
 */
 
+// Iterrator Request
 message IteratorRequest {
 
     string store_path = 1;
     string q = 2;
-    uint32 products_start = 3;
-    uint32 products_count = 4;
+    Products products = 3;
+    View view = 4;
     string pincode = 5;
-    bool redirection = 6;
-    string facet_show = 7;
-    Facet facets = 8;
+    string facet_show = 6;
+    Facet facets = 7;
+    repeated string tags = 8;
+    bool smart_classify = 9;
+    Select select = 10;
+    Query query = 11;
+    bool retry_spell_suggestion = 12;
+}
 
+message Products {
+    uint32 start = 1;
+    uint32 count = 2;
+    bool popularity_score = 3;
+}
+message View {
+    string id = 1;
+    string count = 2;
+}
+message Select {
+    bool augment = 1;
+    bool substores = 2;
+}
+message Query {
+    bool stub = 1;
+    bool guide = 2;
 }
 
 // Specifying Facet
@@ -65,7 +112,7 @@ message Facet {
 
     PriceRange price_range = 1; // specifying price range
     bool serviceability = 2;
-    bool availability = 3;
+    string availability = 3;
     repeated string promo = 4; // specifying offerIds
     repeated string discount_range_v1 = 5;
     repeated NameValue name_values = 6;
@@ -83,5 +130,29 @@ message PriceRange {
 
 // Iterator Response
 message IteratorResponse {
+
+
+    bool isSuperStore = 1;
+
+
+}
+
+message Store {
+    int32 id = 1;
+    repeated string categories = 2;
+    string title = 3;
+
+}
+
+// ----------------------------------
+
+// Filter Request
+message FilterRequest {
+
+
+}
+
+message FilterResponse {
+
 
 }
