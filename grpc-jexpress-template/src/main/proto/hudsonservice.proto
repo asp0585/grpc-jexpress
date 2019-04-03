@@ -50,14 +50,15 @@ Iterator POST request format:
 			"from": "200",
 			"to": "100"
 		},
-		"promo": ["nb:mp:02927f2727", "nb:mp:02927f2728"],
-		"serviceability": true,
-		"availability": "Exclude out of stock",
-		"discount_range_v1": ["50% or More", "10% or More"],
 		"name_values": [{
 			"name": "brand",
 			"values": ["Disney+Infinity", "Disney+Princess"]
-		}]
+		}],
+		"list_values": {
+			"brand": {
+				"value": ["Disney+Infinity", "Disney+Princess"]
+			}
+		}
 	},
 	"tags": ["womens-trimmers"],
 	"smart_classify": true,
@@ -111,10 +112,6 @@ message Query {
 message Facet {
 
     PriceRange price_range = 1; // specifying price range
-    bool serviceability = 2;
-    string availability = 3;
-    repeated string promo = 4; // specifying offerIds
-    repeated string discount_range_v1 = 5;
     repeated NameValue name_values = 6;
 }
 
