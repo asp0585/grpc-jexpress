@@ -6,6 +6,7 @@ import com.flipkart.grpc.jexpress.HudsonServiceGrpc;
 import com.flipkart.grpc.jexpress.IteratorRequest;
 import com.flipkart.grpc.jexpress.IteratorResponse;
 import com.flipkart.grpc.jexpress.SampleConfiguration;
+import com.flipkart.grpc.jexpress.SmartClassify;
 import com.flipkart.grpc.jexpress.filter.GetHudsonLoggingFilter;
 import io.grpc.stub.StreamObserver;
 
@@ -27,7 +28,7 @@ public class HudsonService extends HudsonServiceGrpc.HudsonServiceImplBase imple
     public void iterator(IteratorRequest request,
                          StreamObserver<IteratorResponse> responseObserver) {
         info("anand");
-        IteratorResponse response = IteratorResponse.newBuilder().build();
+        IteratorResponse response = IteratorResponse.newBuilder().setSmartClassify(SmartClassify.newBuilder().setName("@anand").build()).build();
         responseObserver.onNext(response);
         responseObserver.onCompleted();
     }

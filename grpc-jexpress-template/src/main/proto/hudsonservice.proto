@@ -76,7 +76,7 @@ Iterator POST request format:
 // Iterrator Request
 message IteratorRequest {
 
-    string store_path = 1;
+    string store_path = 1 [json_name="store-path"];
     string q = 2;
     Products products = 3;
     View view = 4;
@@ -127,11 +127,12 @@ message PriceRange {
 
 // Iterator Response
 message IteratorResponse {
+    bool isSuperStore = 1 [json_name="is-superstore"];
+    SmartClassify smart_classify = 2 [json_name = "@smart-classify"];
+}
 
-
-    bool isSuperStore = 1;
-
-
+message SmartClassify {
+    string name = 1 [json_name = "@name"];
 }
 
 message Store {
